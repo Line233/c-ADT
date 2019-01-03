@@ -1,39 +1,27 @@
-CC=gcc
-OBJstatus=Status.o
-OBJtype=Int.o Triple.o 
-OBJelement= ElementType.o 
-OBJbinarytree=BinaryTree.o
-#test
-OBJbinarytreetest=BinaryTreeTest.o
-OBJelementest=ElementTypeTest.o
+CC=gcc -I ./ADT -I ./ADT/BasicTypes
+OBJBasicElement=${./ADT/BasicTypes/*.o}
+OBJADT=${./ADT/*.o}
+
 
 all:BinaryTreeTest.exe ElementTypeTest.exe
 
-BinaryTreeTest.exe:$(OBJelement) $(OBJtype) $(OBJstatus) $(OBJbinarytree) $(OBJbinarytreetest)
+BinaryTreeTest.exe: ./ADT/*.o ./ADT/BasicTypes/*.o BinaryTreeTest.o
 	$(CC) -o $@ $^
 
-ElementTypeTest.exe:$(OBJelement) $(OBJelement) $(OBJtype) $(OBJstatus) $(obj) $(OBJelementest)
-	$(CC) -o $@ $^
+ElementTypeTest.exe:./ADT/*.o ./ADT/BasicTypes/*.o ElementTypeTest.o
+	$(CC) -o $@ $^ 
 
-$(OBJelementest):$(OBJelement)
-
-$(OBJbinarytreetest):$(OBJbinarytree)
-
-$(OBJbinarytree):$(OBJelement)
-
-$(OBJelement):$(OBJtype) $(OBJstatus)
+./ADT/*.o:
+	cd ./ADT && MAKE
+./ADT/BasicTypes/*.o:
 
 %.o:%.c
 	$(CC) -c $*.c
 
 clean:
-	rm $(OBJstatus) 
-	rm $(OBJtype) 
-	rm $(OBJelement) 
-	rm $(OBJbinarytree) 
-	rm $(OBJbinarytreetest) 
-	rm $(OBJelementest) 
-
+	rm BinaryTreeTest.o ElementTypeTest.o 
+	cd ./ADT && MAKE clean
+	
 
 # ElementTypeTest.exe:$(Types)
 #      $(CC) -o ElementTypeTest.exe $(Types)

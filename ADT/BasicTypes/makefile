@@ -1,19 +1,18 @@
 CC=gcc
-# CFLAGS=-I
-OBJ=Int.o Triple.o ElementType.o ElementTypeTest.o Status.o
-# src=Int.c Triple.c ElementType.c ElementTypeTest.c
+OBJstatus=Status.o
+OBJtype=Int.o Triple.o 
+OBJelement= ElementType.o 
 
-all:BinaryTreeTest.exe
 
-ElementTypeTest.exe:$(OBJ)
-	$(CC) -o ElementTypeTest.exe $(OBJ)
+all:$(OBJstatus) $(OBJtype) $(OBJelement)
 
 %.o:%.c
 	$(CC) -c $*.c
 
 clean:
-	rm $(OBJ) 
-# all:ElementTypeTest.exe
+	rm $(OBJstatus) 
+	rm $(OBJtype) 
+	rm $(OBJelement) 
 
 # ElementTypeTest.exe:$(Types)
 #      $(CC) -o ElementTypeTest.exe $(Types)
