@@ -16,11 +16,13 @@ typedef struct
 
 //public
 void InitiateElement(ElementType *e, type t); //malloc content
+void TEST(char content[],int level);
 void DestroyElement(ElementType *e);          //free content
 void PrintElement(ElementType t);
 int CmpElement(ElementType a, ElementType b);
 void CopyElement(ElementType copy, ElementType a);
-void SetValue(ElementType t, void *value);
+void SetValue(ElementType e, void *value);
+void GetValue(ElementType e,void* value);
 
 //for eachtype
 

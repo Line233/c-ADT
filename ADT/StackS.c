@@ -31,7 +31,7 @@ Status PrintStackS(char info[], StackS stack)
     }
     printf("\n");
 }
-Status PushSS(ElementType e, StackS *stack) //if you want to change this struct you have to use a pointer
+Status PushSS(StackS *stack,ElementType e) //if you want to change this struct you have to use a pointer
 {
     if(e.t!=stack->t) EXIT(ERROR,"different type when pushss");
     if (stack->top - stack->base >= stack->size)

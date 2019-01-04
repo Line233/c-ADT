@@ -19,9 +19,9 @@ void DestroyElement(ElementType *e)
         free(e->content);
     e->content = NULL;
 }
-void PrintElement(ElementType t)
+void PrintElement(ElementType e)
 {
-    (*print[t.t])(t.content);
+    (*print[e.t])(e.content);
 }
 int CmpElement(ElementType a, ElementType b)
 {
@@ -35,9 +35,13 @@ void CopyElement(ElementType copy, ElementType a)
         EXIT(ERROR, "differrent type can't compare");
     (*Copy[copy.t])(copy.content, a.content);
 }
-void SetValue(ElementType t, void *value)
+void SetValue(ElementType e, void *value)
 {
-    (*Copy[t.t])(t.content, value);
+    (*Copy[e.t])(e.content, value);
+}
+void GetValue(ElementType e, void *value)
+{
+    (*Copy[e.t])(value, e.content);
 }
 
 //for each type

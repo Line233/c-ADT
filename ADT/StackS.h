@@ -23,7 +23,7 @@ typedef struct
 
 Status InitiateStackS(StackS *s,type e);
 Status PrintStackS(char info[], StackS stack);
-Status PushSS(ElementType e, StackS *stack);
+Status PushSS(StackS *stack,ElementType e);
 Status IncreaseSS(StackS *stack);
 void GetTopSS(StackS stack,ElementType* e);
 void PopSS(StackS *stack,ElementType* e);

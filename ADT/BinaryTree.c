@@ -65,14 +65,12 @@ void PrintBTree(BTree bt)
     InitiateStackS(&stack, Tpointer);
     ElementType e;
     InitiateElement(&e, Tpointer);
-    void *tmp;
     //
     BTree p = bt;
     for (; p != NULL; p = p->left)
     {
-        tmp = p;
-        SetValue(e, &tmp);
-        PushSS(e, &stack);
+        SetValue(e, &p);
+        PushSS( &stack,e);
     } //go to left to end
     while (!IsEmptySS(stack))
     {
@@ -83,7 +81,7 @@ void PrintBTree(BTree bt)
         for (BTree q = p->right; q != NULL; q = q->left)
         {
             SetValue(e, &q);
-            PushSS(e, &stack);
+            PushSS( &stack,e);
         } //go to left to end
     }
 }

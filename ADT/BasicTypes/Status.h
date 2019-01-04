@@ -11,5 +11,6 @@
 typedef int Status;
 
 void EXIT(int x,char s[]);
+void TEST(char content[],int level);
 
 #endif
