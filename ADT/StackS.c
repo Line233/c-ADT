@@ -88,3 +88,15 @@ bool IsEmptySS(StackS stack)
 {
     return !(stack.top - stack.base > 0);
 }
+void DestorySS(StackS* stack)
+{
+    for(int i=0;i<stack->size;i++)
+    {
+        DestroyElement(stack->base+i);
+    }
+    if(stack->base)
+        free(stack->base);
+    stack->base=stack->top=NULL;
+    stack->size=0;
+    stack->t=Tnone;
+}

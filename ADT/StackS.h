@@ -27,5 +27,6 @@ Status PushSS(ElementType e, StackS *stack);
 Status IncreaseSS(StackS *stack);
 void GetTopSS(StackS stack,ElementType* e);
 void PopSS(StackS *stack,ElementType* e);
+void DestorySS(StackS* stack);
 bool IsEmptySS(StackS stack);
 #endif

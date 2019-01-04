@@ -13,7 +13,7 @@ void InitiateElement(ElementType *e, type t)
 }
 void DestroyElement(ElementType *e)
 {
-    e->t = None;
+    e->t = Tnone;
     (*Destroy)(e->content);
     if (e->content)
         free(e->content);

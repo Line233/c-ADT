@@ -6,7 +6,7 @@ typedef enum
     Tint,
     Ttriple,
     Tpointer,
-    None
+    Tnone
 } type;
 typedef struct
 {
