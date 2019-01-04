@@ -11,10 +11,11 @@ typedef struct btree *BTree;
     ElementType e;
     BTree left;
     BTree right;
+    type t;
     int depth;
 };
 
-void InitiateBTree(BTree* bt,ElementType e);
+void InitiateBTree(BTree* bt,type t);
 void OrderInsertBT(BTree bt,ElementType e);
 void PrintBTree(BTree bt);
 

@@ -5,7 +5,7 @@
 int main()
 {
     //public
-    FILE *f = fopen("BTTEST.txt", "r");
+    FILE *f = fopen("TestData/BTTEST.txt", "r");
     if (!f)
         EXIT(ERROR, "open file failed");
     int n, x;
@@ -21,7 +21,8 @@ int main()
         SetElement(e,&x);
         if(bt==NULL)
         {
-            InitiateBTree(&bt,e);
+            InitiateBTree(&bt,e.t);
+            CopyElement((bt->e),e);
         }
         else{
             OrderInsertBT(bt,e);

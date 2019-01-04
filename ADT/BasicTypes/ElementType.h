@@ -14,18 +14,17 @@ typedef struct
 } ElementType;
 
 //public
-void InitiateElement(ElementType *e, type t);
-void DestroyElement(ElementType *e);
+void InitiateElement(ElementType *e, type t); //malloc content
+void DestroyElement(ElementType *e);          //free content
 void PrintElement(ElementType t);
 int CmpElement(ElementType a, ElementType b);
-void CopyElement(ElementType *copy, ElementType a);
+void CopyElement(ElementType copy, ElementType a);
 void SetElement(ElementType t, void *value);
 
 //for eachtype
 
-
 #include "Triple.h"
-#include"Int.h"
+#include "Int.h"
 //function list
 static void (*print[])(void *) = {
     PrintInt, PrintTriple};
@@ -36,10 +35,8 @@ static void (*Copy[])(void *, void *) = {
     CopyInt, CopyTriple};
 static void (*Initiate[])(void *) = {
     InitiateInt, InitiateTriple};
-static void(*Destroy[])(void*)={
-    DestroyInt,InitiateTriple
-};
+static void (*Destroy[])(void *) = {
+    DestroyInt, InitiateTriple};
 static int Esize[] = {sizeof(int), sizeof(Triple)};
-
 
 #endif

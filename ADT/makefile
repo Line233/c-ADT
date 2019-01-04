@@ -1,5 +1,5 @@
-CC=gcc -I ./BasicTypes
-OBJADT=BinaryTree.o
+CC=gcc -I ./BasicTypes -g
+OBJADT=BinaryTree.o StackS.o
 #test
 
 

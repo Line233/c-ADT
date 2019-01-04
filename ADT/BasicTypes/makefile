@@ -1,4 +1,4 @@
-CC=gcc
+CC=gcc -g
 OBJstatus=Status.o
 OBJtype=Int.o Triple.o 
 OBJelement= ElementType.o 

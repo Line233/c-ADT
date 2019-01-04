@@ -1,19 +1,23 @@
-CC=gcc -I ./ADT -I ./ADT/BasicTypes
+CC=gcc -I ./ADT -I ./ADT/BasicTypes -g
 OBJBasicElement=${./ADT/BasicTypes/*.o}
 OBJADT=${./ADT/*.o}
 
 
-all:BinaryTreeTest.exe ElementTypeTest.exe
+all:BinaryTreeTest.exe ElementTypeTest.exe StackSTest.exe
 
 BinaryTreeTest.exe: ./ADT/*.o ./ADT/BasicTypes/*.o BinaryTreeTest.o
 	$(CC) -o $@ $^
 
-ElementTypeTest.exe:./ADT/*.o ./ADT/BasicTypes/*.o ElementTypeTest.o
+StackSTest.exe: ./ADT/*.o ./ADT/BasicTypes/*.o StackSTest.o
+	$(CC) -o $@ $^
+
+ElementTypeTest.exe:./ADT/BasicTypes/*.o ElementTypeTest.o
 	$(CC) -o $@ $^ 
 
-./ADT/*.o:
+./ADT/*.o:./ADT/*.c
 	cd ./ADT && MAKE
-./ADT/BasicTypes/*.o:
+./ADT/BasicTypes/*.o:./ADT/BasicTypes/*.c
+	cd ./ADT/BasicTypes && MAKE
 
 %.o:%.c
 	$(CC) -c $*.c

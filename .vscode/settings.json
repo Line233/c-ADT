@@ -1,5 +1,7 @@
 {
     "files.associations": {
-        "elementtype.h": "c"
-    }
+        "elementtype.h": "c",
+        "malloc.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }
