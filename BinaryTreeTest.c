@@ -3,14 +3,19 @@
 #include"BinaryTree.h"
 #include"ElementType.h"
 
-void visitInt(ElementType e)
+void visit_bt(BTree bt)
 {
-    PrintElement(e);
+    for(int i=0;i<bt->depth;i++)
+    {
+        printf(".");
+    }
+    PrintElement(bt->e);
     printf("\n");
 }
 int main()
 {
     //public
+    TEST("BINARYTREE",0);
     FILE *f = fopen("TestData/BTTEST.txt", "r");
     if (!f)
         EXIT(ERROR, "open file failed");
@@ -19,6 +24,8 @@ int main()
     InitiateElement(&e,Tint);
 
     //test initiate and order insert
+    TEST("OrderInsert and InOrderTraverse",1);
+    TEST("bt should be in order from small to big",2);
     BTree bt=NULL;
     fscanf(f, "%d", &n);
     for (int i = 0; i < n; i++)
@@ -34,7 +41,15 @@ int main()
             OrderInsertBT(bt,e);
         }
     }
-    InOrderTraverse(bt,visitInt);
+    InOrderTraverse(bt,visit_bt);
+
+    //
+    TEST("PreOrderTraverse",1);
+    PreOrderTraverse(bt,visit_bt);
+
+    getchar();
+    TEST("PostOrderTraverse",1);
+    PostOrderTraverse(bt,visit_bt);
 
     //public
     fclose(f);

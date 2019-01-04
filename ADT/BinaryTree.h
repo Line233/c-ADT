@@ -6,7 +6,7 @@
 #include "ElementType.h"
 
 typedef struct btree *BTree;
- struct btree
+struct btree
 {
     ElementType e;
     BTree left;
@@ -15,10 +15,11 @@ typedef struct btree *BTree;
     int depth;
 };
 
-void InitiateBTree(BTree* bt,type t);
-void OrderInsertBT(BTree bt,ElementType e);
-void InOrderTraverse(BTree bt,void (*visit)(ElementType));
-void InOrderTraverseR(BTree bt, void (*visit)(ElementType));
-
+void InitiateBTree(BTree *bt, type t);
+void OrderInsertBT(BTree bt, ElementType e);
+void InOrderTraverse(BTree bt, void (*visit)(BTree));
+void InOrderTraverseR(BTree bt, void (*visit)(BTree));
+void PostOrderTraverse(BTree bt, void (*visit)(BTree));
+void PreOrderTraverse(BTree bt, void (*visit)(BTree));
 
 #endif
