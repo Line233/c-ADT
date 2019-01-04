@@ -14,11 +14,11 @@ typedef struct{
 }Triple;
 
 //
-void PrintTriple(void *k);
-int CmpTriple(void *a, void *b);
-void CopyTriple(void *copy, void *a);
-void InitiateTriple(void* e);
-void InitiateTriple(void* e);
-void DestroyTriple(void* e);
+void print_triple(void *k);
+int cmp_triple(void *a, void *b);
+void copy_triple(void *copy, void *a);
+void initiate_triple(void* e);
+void initiate_triple(void* e);
+void destroy_triple(void* e);
 //
 #endif

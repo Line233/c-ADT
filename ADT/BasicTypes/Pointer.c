@@ -3,23 +3,23 @@
 #include<stdio.h>
 
 
-void PrintPointer(void *k)
+void print_pointer(void *k)
 {
     printf("%p",*(void**)k);
 }
-int CmpPointer(void *a, void *b)
+int cmp_pointer(void *a, void *b)
 {
     return *(void**)a-*(void**)b;
 }
-void CopyPointer(void *copy, void *a)
+void copy_pointer(void *copy, void *a)
 {
     *(void**)copy=*(void**)a;
 }
-void InitiatePointer(void *e)
+void initiate_pointer(void *e)
 {
     *(void**)e=NULL;
 }
-void DestroyPointer(void* e)
+void destroy_pointer(void* e)
 {
     *(void**)e=NULL;
 }

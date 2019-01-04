@@ -47,25 +47,16 @@ void OrderInsertBT(BTree bt, ElementType e)
         }
     }
 }
-void PrintBTree(BTree bt)
+void InOrderTraverse(BTree bt, void (*visit)(ElementType))
 {
     if (bt == NULL)
         return;
-    // else
-    // {
-    //     PrintBTree(bt->left);
-    //     PrintElement(bt->e);
-    //     printf("\n");
-    //     PrintBTree(bt->right);
-    // }
-    // printf("\n");
-
-    //inplement by stack
+    //variables
     StackS stack;
     InitiateStackS(&stack, Tpointer);
     ElementType e;
     InitiateElement(&e, Tpointer);
-    //
+    //traverse
     BTree p = bt;
     for (; p != NULL; p = p->left)
     {
@@ -75,13 +66,24 @@ void PrintBTree(BTree bt)
     while (!IsEmptySS(stack))
     {
         PopSS(&stack, &e); //each pop which's left should had been read
-        p = *((BTree *)e.content);
-        PrintElement(p->e);
-        printf("\n");
+        GetValue(e,&p);
+        (*visit)(p->e);
         for (BTree q = p->right; q != NULL; q = q->left)
         {
             SetValue(e, &q);
             PushSS( &stack,e);
         } //go to left to end
     }
+}
+void InOrderTraverseR(BTree bt, void (*visit)(ElementType))
+{
+    if (bt == NULL)
+        return;
+    else
+    {
+        InOrderTraverseR(bt->left,(*visit));
+        (*visit)(bt->e);
+        InOrderTraverseR(bt->right,(*visit));
+    }
+    printf("\n");
 }

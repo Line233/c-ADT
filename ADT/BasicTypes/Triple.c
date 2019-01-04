@@ -1,20 +1,20 @@
 #include "Triple.h"
 #include "Status.h"
 
-void PrintTriple(void *k)
+void print_triple(void *k)
 {
     Triple *t = (Triple *)k;
     printf("%d %d %d", t->a, t->b, t->c);
 };
 
-int CmpTriple(void *a, void *b)
+int cmp_triple(void *a, void *b)
 {
     Triple *t1 = (Triple *)a;
     Triple *t2 = (Triple *)b;
     return t1->a - t1->b;
 }
 
-void CopyTriple(void *copy, void *a)
+void copy_triple(void *copy, void *a)
 {
     Triple *t1 = (Triple *)a;
     Triple *t2 = (Triple *)copy;
@@ -23,13 +23,13 @@ void CopyTriple(void *copy, void *a)
     t2->c = t1->c;
 }
 
-void InitiateTriple(void *e)
+void initiate_triple(void *e)
 {
     Triple *t = (Triple *)e;
     t->a = t->b = t->c = 0;
 }
 
-void DestroyTriple(void* e)
+void destroy_triple(void* e)
 {
     
 }

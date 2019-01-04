@@ -54,7 +54,7 @@ void TestTriple()
     //test set value
     printf("test set value:t should be 1 2 3\n\t");
     Triple tx;
-    InitiateTriple(&tx);
+    initiate_triple(&tx);
     tx.a = 1;
     tx.b = 2, tx.c = 3;
     SetValue(t, &tx);
@@ -75,7 +75,7 @@ void TestPointer()
     //test set value
     printf("test set value:t should be 1 2 3\n\t");
     void *px;
-    InitiatePointer(&px);
+    initiate_pointer(&px);
     int x = 10;
     px = &x;
     SetValue(p, &px);

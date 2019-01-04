@@ -17,7 +17,8 @@ typedef struct btree *BTree;
 
 void InitiateBTree(BTree* bt,type t);
 void OrderInsertBT(BTree bt,ElementType e);
-void PrintBTree(BTree bt);
+void InOrderTraverse(BTree bt,void (*visit)(ElementType));
+void InOrderTraverseR(BTree bt, void (*visit)(ElementType));
 
 
 #endif

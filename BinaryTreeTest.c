@@ -2,6 +2,12 @@
 #include <stdio.h>
 #include"BinaryTree.h"
 #include"ElementType.h"
+
+void visitInt(ElementType e)
+{
+    PrintElement(e);
+    printf("\n");
+}
 int main()
 {
     //public
@@ -28,7 +34,7 @@ int main()
             OrderInsertBT(bt,e);
         }
     }
-    PrintBTree(bt);
+    InOrderTraverse(bt,visitInt);
 
     //public
     fclose(f);
