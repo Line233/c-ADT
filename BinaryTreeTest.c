@@ -18,7 +18,7 @@ int main()
     for (int i = 0; i < n; i++)
     {
         fscanf(f,"%d",&x);
-        SetElement(e,&x);
+        SetValue(e,&x);
         if(bt==NULL)
         {
             InitiateBTree(&bt,e.t);

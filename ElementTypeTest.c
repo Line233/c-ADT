@@ -17,7 +17,7 @@ void testInt()
     //test setvalue
     printf("test set value:a should be x/5\n\t");
     int x = 5;
-    SetElement(a, &x);
+    SetValue(a, &x);
     PrintElement(a);
     printf("\n");
 
@@ -56,7 +56,7 @@ void TestTriple()
     Triple tx;
     InitiateTriple(&tx);
     tx.a=1;tx.b=2,tx.c=3;
-    SetElement(t, &tx);
+    SetValue(t, &tx);
     PrintElement(t);
     printf("\n");
 }
@@ -77,7 +77,7 @@ void TestPointer()
     InitiatePointer(&px);
     int x=10;
     px=&x;
-    SetElement(p, &px);
+    SetValue(p, &px);
     PrintElement(p);
     printf("\n");
     
@@ -96,7 +96,7 @@ void TestPointer()
     {
         InitiateElement(&ps[i],Tpointer);
         void* m =&i;
-        SetElement(ps[i],&m);
+        SetValue(ps[i],&m);
     }
     for(int i=0;i<10;i++)
     {

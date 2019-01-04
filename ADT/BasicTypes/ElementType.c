@@ -35,7 +35,7 @@ void CopyElement(ElementType copy, ElementType a)
         EXIT(ERROR, "differrent type can't compare");
     (*Copy[copy.t])(copy.content, a.content);
 }
-void SetElement(ElementType t, void *value)
+void SetValue(ElementType t, void *value)
 {
     (*Copy[t.t])(t.content, value);
 }

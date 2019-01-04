@@ -71,7 +71,7 @@ void PrintBTree(BTree bt)
     for (; p != NULL; p = p->left)
     {
         tmp = p;
-        SetElement(e, &tmp);
+        SetValue(e, &tmp);
         PushSS(e, &stack);
     } //go to left to end
     while (!IsEmptySS(stack))
@@ -82,7 +82,7 @@ void PrintBTree(BTree bt)
         printf("\n");
         for (BTree q = p->right; q != NULL; q = q->left)
         {
-            SetElement(e, &q);
+            SetValue(e, &q);
             PushSS(e, &stack);
         } //go to left to end
     }

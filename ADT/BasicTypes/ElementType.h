@@ -20,7 +20,7 @@ void DestroyElement(ElementType *e);          //free content
 void PrintElement(ElementType t);
 int CmpElement(ElementType a, ElementType b);
 void CopyElement(ElementType copy, ElementType a);
-void SetElement(ElementType t, void *value);
+void SetValue(ElementType t, void *value);
 
 //for eachtype
 

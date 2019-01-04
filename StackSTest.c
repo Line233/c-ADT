@@ -99,7 +99,7 @@ int main(void)
     {
         int x;
         fscanf(r, "%d", &x);
-        SetElement(e, &x);
+        SetValue(e, &x);
         PushSS(e, &stack);
         // PrintStackS("had pushed stack", stack);//debug
     }
@@ -110,7 +110,7 @@ int main(void)
     {
         int x;
         fscanf(r, "%d", &x);
-        SetElement(e, &x);
+        SetValue(e, &x);
         PushSS(e, &stack);
     }
     PrintStackS("test increase", stack);
@@ -139,13 +139,13 @@ int main(void)
     int array2[5];
     for(int i=0;i<10;i++){
         void* v=&array[i];
-        SetElement(e2,&v);
+        SetValue(e2,&v);
         PushSS(e2,&stack2);
     }
     PrintStackS("stack2",stack2);
      for(int i=0;i<5;i++){
         void* v=&array2[i];
-        SetElement(e2,&v);
+        SetValue(e2,&v);
         PopSS(&stack2,&e2);
         printf("\n");
         PrintElement(e2);
@@ -153,7 +153,7 @@ int main(void)
     PrintStackS("ff",stack2);
  for(int i=0;i<10;i++){
         void* v=&array[i];
-        SetElement(e2,&v);
+        SetValue(e2,&v);
         PushSS(e2,&stack2);
     }
     PrintStackS("stack2",stack2);
