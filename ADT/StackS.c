@@ -5,7 +5,6 @@
 
 Status InitiateStackS(StackS *s, type e)
 {
-
     s->base = (ElementType *)malloc(STACKS_INIT_SIZE * sizeof(ElementType));
     if (!s->base)
         EXIT(ERROR, "no space when initiate stack");
@@ -15,11 +14,13 @@ Status InitiateStackS(StackS *s, type e)
         InitiateElement(s->base + i, e);
     }
     s->size = STACKS_INIT_SIZE;
+    s->t=e;
 }
 Status PrintStackS(char info[], StackS stack)
 {
     printf("%s:\n", info);
     printf("\ttotal space:%d\n", stack.size);
+    printf("\tused size is %d\n",stack.top-stack.base);
     ElementType *p = stack.top;
     while (p - stack.base > 0)
     {
@@ -32,13 +33,15 @@ Status PrintStackS(char info[], StackS stack)
 }
 Status PushSS(ElementType e, StackS *stack) //if you want to change this struct you have to use a pointer
 {
+    if(e.t!=stack->t) EXIT(ERROR,"different type when pushss");
     if (stack->top - stack->base >= stack->size)
     {
         //don't have enough space
         IncreaseSS(stack);
     }
-    CopyElement((*stack).top,e);
+    CopyElement(*(stack->top),e);
     stack->top++;
+
 }
 Status IncreaseSS(StackS *stack)
 {
@@ -54,10 +57,12 @@ Status IncreaseSS(StackS *stack)
 }
 void GetTopSS(StackS stack,ElementType* e)
 {
+    if(e->t!=stack.t) EXIT(ERROR,"different type when gettopss");
+
     if (stack.top - stack.base > 0)
     {
-        *e= *(stack.top - 1);
-        CopyElement(e,*(stack.top-1));
+        // *e= *(stack.top - 1);
+        CopyElement(*e,*(stack.top-1));
     }
     else
     {
@@ -66,10 +71,12 @@ void GetTopSS(StackS stack,ElementType* e)
 }
 void PopSS(StackS *stack,ElementType* e)
 {
+    if(e->t!=stack->t) EXIT(ERROR,"different type when popss");
+
     if (stack->top - stack->base > 0)
     {
-        *e= *(stack->top - 1);
-        CopyElement(e,*(stack->top-1));
+        // *e= *(stack->top - 1);
+        CopyElement(*e,*(stack->top-1));
         stack->top--;
     }
     else

@@ -17,6 +17,7 @@ typedef struct
     ElementType *top;
     ElementType *base;
     int size;
+    type t;
 } StackS;
 
 

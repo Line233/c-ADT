@@ -82,13 +82,15 @@ int main(void)
         return ERROR;
     }
     feof(r);
-    ElementType e;
-    InitiateElement(&e, Tint);
 
     //test InitiateStackS, PrintStackS
+    
     StackS stack;
+    ElementType e;
+    InitiateElement(&e, Tint);
     InitiateStackS(&stack, Tint);
     PrintStackS("an empty stacks", stack);
+    
 
     //test PushSS, IncreaseSS
     int n;
@@ -128,6 +130,34 @@ int main(void)
     }
     PrintStackS("empty stack:", stack);
 
+    //test
+    ElementType e2;
+    InitiateElement(&e2,Tpointer);
+    StackS stack2;
+    InitiateStackS(&stack2,Tpointer);
+    int array[10];
+    int array2[5];
+    for(int i=0;i<10;i++){
+        void* v=&array[i];
+        SetElement(e2,&v);
+        PushSS(e2,&stack2);
+    }
+    PrintStackS("stack2",stack2);
+     for(int i=0;i<5;i++){
+        void* v=&array2[i];
+        SetElement(e2,&v);
+        PopSS(&stack2,&e2);
+        printf("\n");
+        PrintElement(e2);
+    }
+    PrintStackS("ff",stack2);
+ for(int i=0;i<10;i++){
+        void* v=&array[i];
+        SetElement(e2,&v);
+        PushSS(e2,&stack2);
+    }
+    PrintStackS("stack2",stack2);
+
     // //top get error
     // printf("top is %d\n\n", GetTopSS(stack));
 
@@ -135,7 +165,7 @@ int main(void)
     // int n3;
     // fscanf(r, "%d", &n3);
     // Conversion(n3, 2);
-    int x= fclose(r);
-    printf("close file successfully %d",x);
+    int x = fclose(r);
+    printf("close file successfully %d", x);
     getchar();
 }

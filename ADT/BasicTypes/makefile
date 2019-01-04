@@ -1,6 +1,6 @@
 CC=gcc -g
 OBJstatus=Status.o
-OBJtype=Int.o Triple.o 
+OBJtype=Int.o Triple.o Pointer.o
 OBJelement= ElementType.o 
 
 

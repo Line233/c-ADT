@@ -1,6 +1,7 @@
 #include "ElementType.h"
 #include <stdio.h>
 #include "Triple.h"
+#include"Pointer.h"
 
 void testInt()
 {
@@ -59,8 +60,56 @@ void TestTriple()
     PrintElement(t);
     printf("\n");
 }
+void TestPointer()
+{
+    printf("test pointer____________________________\n");
+
+    //initiate
+    printf("test initiate pionter:p is\n\t");
+    ElementType p;
+    InitiateElement(&p, Tpointer);
+    PrintElement(p);
+    printf("\n");
+
+    //test set value
+    printf("test set value:t should be 1 2 3\n\t");
+    void* px;
+    InitiatePointer(&px);
+    int x=10;
+    px=&x;
+    SetElement(p, &px);
+    PrintElement(p);
+    printf("\n");
+    
+    //test copy
+    printf("test copy:p2 should equal p\n\t");
+    ElementType p2;
+    InitiateElement(&p2,Tpointer);
+    CopyElement(p2,p);
+    PrintElement(p2);
+    printf("\n");
+
+    //test array of element
+    printf("test array of elem\n");
+    ElementType ps[10];
+    for(int i=0;i<10;i++)
+    {
+        InitiateElement(&ps[i],Tpointer);
+        void* m =&i;
+        SetElement(ps[i],&m);
+    }
+    for(int i=0;i<10;i++)
+    {
+        printf("\t");
+        PrintElement(ps[i]);
+        printf("\n");
+    }
+    //
+    printf("test pointer____________________________\n");
+}
 int main()
 {
+    TestPointer();
     TestTriple();
     testInt();
     //over

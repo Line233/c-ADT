@@ -5,13 +5,14 @@ typedef enum
 {
     Tint,
     Ttriple,
+    Tpointer,
     None
 } type;
 typedef struct
 {
     void *content;
     type t;
-} ElementType;
+} ElementType;//a struct 
 
 //public
 void InitiateElement(ElementType *e, type t); //malloc content
@@ -25,18 +26,19 @@ void SetElement(ElementType t, void *value);
 
 #include "Triple.h"
 #include "Int.h"
+#include"Pointer.h"
 //function list
 static void (*print[])(void *) = {
-    PrintInt, PrintTriple};
+    PrintInt, PrintTriple,PrintPointer};
 static int (*Cmp[])(void *, void *) =
     {
-        CmpInt, CmpTriple};
+        CmpInt, CmpTriple,CmpPointer};
 static void (*Copy[])(void *, void *) = {
-    CopyInt, CopyTriple};
+    CopyInt, CopyTriple,CopyPointer};
 static void (*Initiate[])(void *) = {
-    InitiateInt, InitiateTriple};
+    InitiateInt, InitiateTriple,InitiatePointer};
 static void (*Destroy[])(void *) = {
-    DestroyInt, InitiateTriple};
-static int Esize[] = {sizeof(int), sizeof(Triple)};
+    DestroyInt, DestroyTriple,DestroyPointer};
+static int Esize[] = {sizeof(int), sizeof(Triple),sizeof(void*)};
 
 #endif
