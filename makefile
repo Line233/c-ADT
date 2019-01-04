@@ -14,16 +14,16 @@ StackSTest.exe: ./ADT/*.o ./ADT/BasicTypes/*.o StackSTest.o
 ElementTypeTest.exe:./ADT/BasicTypes/*.o ElementTypeTest.o
 	$(CC) -o $@ $^ 
 
-./ADT/*.o:./ADT/*.c
+./ADT/*.o:./ADT/*.c ./ADT/*.h
 	cd ./ADT && MAKE
-./ADT/BasicTypes/*.o:./ADT/BasicTypes/*.c
+./ADT/BasicTypes/*.o:./ADT/BasicTypes/*.c ./ADT/BasicTypes/*.h
 	cd ./ADT/BasicTypes && MAKE
 
 %.o:%.c %.h
 	$(CC) -c $*.c
 
 clean:
-	rm BinaryTreeTest.o ElementTypeTest.o 
+	rm BinaryTreeTest.o ElementTypeTest.o StackSTest.o
 	cd ./ADT && MAKE clean
 	
 

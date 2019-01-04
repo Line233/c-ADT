@@ -2,74 +2,7 @@
 #include "status.h"
 #include "StackS.h"
 #include <stdlib.h>
-// //APPLICATION-conversion of Numeral System
-// void Conversion(int ten, int aim)
-// {
-//     StackS stack;
-//     InitiateStackS(&stack);
-//     int r = ten;
-//     do
-//     {
-//         PushSS(r % aim, &stack);
-//         r = r / aim;
-//     } while (r != 0);
-//     printf("%d is ", ten);
-//     while (!IsEmptySS(stack))
-//     {
-//         printf("%d", PopSS(&stack));
-//     }
-//     printf("\n");
-// }
-// //conversion end
 
-// //APPLICATION HANOI
-// void move(int n, StackS *a, StackS *b, StackS *c)
-// {
-//     if (n == 1)
-//     {
-//         if (!IsEmptySS(*a))
-//             PushSS(PopSS(a), c);
-//         else
-//             EXIT(ERROR,"Error in move");
-//     }
-//     else
-//     {
-//         move(n - 1, a, c, b);
-//         move(1, a, b, c);
-//         move(n - 1, b, a, c);
-//     }
-// }
-// void hanoi() //a,b,c three stack
-// {
-//     FILE *f = fopen("hanoi.txt", "r");
-//     int n = 0;
-//     if (fscanf(f, "%d", &n) != 1)
-//     {
-//         fclose(f);
-//         EXIT(ERROR, "hanoi,input error");
-//     }
-//     else
-//     {
-//         fclose(f);
-//         //
-//         StackS a, b, c;
-//         InitiateStackS(&a);
-//         InitiateStackS(&b);
-//         InitiateStackS(&c);
-//         for (int i = n; i > 0; i--) //n to 1
-//         {
-//             PushSS(i, &a);
-//         }
-//         PrintStackS("origin-a:",a);
-//         PrintStackS("origin-b:",b);
-//         PrintStackS("origin-c:",c);
-//         move(n, &a, &b, &c);
-//         PrintStackS("moved-a:",a);
-//         PrintStackS("moved-b:",b);
-//         PrintStackS("moved-c:",c);
-//     }
-// }
-//HANOI END
 int main(void)
 {
     // hanoi();
@@ -169,3 +102,73 @@ int main(void)
     printf("close file successfully %d", x);
     getchar();
 }
+
+
+// //APPLICATION-conversion of Numeral System
+// void Conversion(int ten, int aim)
+// {
+//     StackS stack;
+//     InitiateStackS(&stack);
+//     int r = ten;
+//     do
+//     {
+//         PushSS(r % aim, &stack);
+//         r = r / aim;
+//     } while (r != 0);
+//     printf("%d is ", ten);
+//     while (!IsEmptySS(stack))
+//     {
+//         printf("%d", PopSS(&stack));
+//     }
+//     printf("\n");
+// }
+// //conversion end
+
+// //APPLICATION HANOI
+// void move(int n, StackS *a, StackS *b, StackS *c)
+// {
+//     if (n == 1)
+//     {
+//         if (!IsEmptySS(*a))
+//             PushSS(PopSS(a), c);
+//         else
+//             EXIT(ERROR,"Error in move");
+//     }
+//     else
+//     {
+//         move(n - 1, a, c, b);
+//         move(1, a, b, c);
+//         move(n - 1, b, a, c);
+//     }
+// }
+// void hanoi() //a,b,c three stack
+// {
+//     FILE *f = fopen("hanoi.txt", "r");
+//     int n = 0;
+//     if (fscanf(f, "%d", &n) != 1)
+//     {
+//         fclose(f);
+//         EXIT(ERROR, "hanoi,input error");
+//     }
+//     else
+//     {
+//         fclose(f);
+//         //
+//         StackS a, b, c;
+//         InitiateStackS(&a);
+//         InitiateStackS(&b);
+//         InitiateStackS(&c);
+//         for (int i = n; i > 0; i--) //n to 1
+//         {
+//             PushSS(i, &a);
+//         }
+//         PrintStackS("origin-a:",a);
+//         PrintStackS("origin-b:",b);
+//         PrintStackS("origin-c:",c);
+//         move(n, &a, &b, &c);
+//         PrintStackS("moved-a:",a);
+//         PrintStackS("moved-b:",b);
+//         PrintStackS("moved-c:",c);
+//     }
+// }
+//HANOI END
