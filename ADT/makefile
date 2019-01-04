@@ -8,7 +8,7 @@ all:$(OBJADT) subsystem
 subsystem:
 	cd ./BasicTypes && MAKE
 
-%.o:%.c
+%.o:%.c %.h
 	$(CC) -c $*.c 
 clean:
 	rm $(OBJADT)

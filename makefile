@@ -19,7 +19,7 @@ ElementTypeTest.exe:./ADT/BasicTypes/*.o ElementTypeTest.o
 ./ADT/BasicTypes/*.o:./ADT/BasicTypes/*.c
 	cd ./ADT/BasicTypes && MAKE
 
-%.o:%.c
+%.o:%.c %.h
 	$(CC) -c $*.c
 
 clean:

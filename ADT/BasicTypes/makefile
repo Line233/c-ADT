@@ -6,7 +6,9 @@ OBJelement= ElementType.o
 
 all:$(OBJstatus) $(OBJtype) $(OBJelement)
 
-%.o:%.c
+
+
+%.o:%.c %.h
 	$(CC) -c $*.c
 
 clean:
