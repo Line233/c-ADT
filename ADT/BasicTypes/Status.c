@@ -21,6 +21,6 @@ void TEST(char content[], int level)
         {
             printf("\t");
         }
-        printf("test %s\n", content);
+        printf("TEST %s\n", content);
     }
 }

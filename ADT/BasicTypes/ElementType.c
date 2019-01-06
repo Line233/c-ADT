@@ -32,7 +32,7 @@ int CmpElement(ElementType a, ElementType b)
 void CopyElement(ElementType copy, ElementType a)
 {
     if (copy.t != a.t)
-        EXIT(ERROR, "differrent type can't compare");
+        EXIT(ERROR, "differrent type can't copy");
     (*copy_e[copy.t])(copy.content, a.content);
 }
 void SetValue(ElementType e, void *value)
