@@ -98,14 +98,14 @@ void HuffmanTreeTest()
         EXIT(ERROR, "open file error");
     char c;
     ElementType e;
-    InitiateElement(&e, Tcii);
+    InitiateElement(&e, Tci);
     BTree bt = NULL;
     c = fgetc(f);
     while (c != EOF)
     {
         // printf("%c",c);//debug
-        cii ci = {c, 1, notHT};
-        SetValue(e, &ci);
+        ci cix = {c, 1};
+        SetValue(e, &cix);
         BTree find = NULL;
         FindinBTree(bt, e, &find);
         if (find == NULL)
@@ -114,7 +114,7 @@ void HuffmanTreeTest()
         }
         else
         {
-            ((cii *)find->e.content)->a++;
+            ((ci *)find->e.content)->a++;
         }
         c = fgetc(f);
         // PreOrderTraverse(bt, visit_bt); //debug
@@ -122,10 +122,18 @@ void HuffmanTreeTest()
     }
     printf("bt is\n");
     PreOrderTraverse(bt, visit_bt);
+    //convert bt sort by ci.a
+    BTree btbya = NULL;
+    ConvertBinaryTreeNewCmp(&bt, &btbya, CmpCia);
+    printf("converted bt is\n");
+    InOrderTraverse(btbya, visit_bt);
+
+    ConverttoHuffmanTree(&btbya);
     printf("huffmantree is\n");
 
-    ConverttoHuffmanTree(&bt);
-    PreOrderTraverse(bt, visit_bt);
+    PreOrderTraverse(btbya,visit_bt);
+    printf("level traverse\n");
+    LevelOrderTraverse(btbya, visit_bt,1);
     //
     fclose(f);
     printf("close successfully\n\n\n");

@@ -1,6 +1,7 @@
 #include "BinaryTree.h"
 #include <malloc.h>
 #include "StackS.h"
+#include "Queue.h"
 
 void InitiateBTree(BTree *bt, type t)
 {
@@ -15,17 +16,18 @@ void InitiateBTree(BTree *bt, type t)
 
 void OrderInsertBT(BTree *bt, ElementType e)
 {
-    if ((*bt) != NULL && (*bt)->t != e.t)
+    OrderInsertElementBT_withCmp(bt, e, CmpElement);
+}
+void OrderInsertBT_withCmp(BTree *bt, BTree node, int (*cmp)(ElementType, ElementType))
+{
+    if ((*bt) != NULL && (*bt)->t != node->t)
         EXIT(ERROR, "type different when orderInsertBT");
-    BTree btc;
-    InitiateBTree(&btc, e.t);
-    CopyElement((btc->e), e);
     BTree pre = NULL;
     BTree *btx = bt;
     while (*btx)
     {
         pre = *btx;
-        int c = CmpElement(e, (*btx)->e);
+        int c = (*cmp)(node->e, (*btx)->e);
         if (c < 0)
         {
             btx = &((*btx)->left);
@@ -36,10 +38,64 @@ void OrderInsertBT(BTree *bt, ElementType e)
             btx = &((*btx)->right);
         }
     }
-    *btx = btc;
-    btc->parent = pre;
-    if (btc->parent != NULL)
-        btc->depth = btc->parent->depth + 1;
+    *btx = node;
+    node->parent = pre;
+    node->depth = node->parent ? node->parent->depth + 1 : 0;
+}
+void OrderInsertElementBT_withCmp(BTree *bt, ElementType e, int (*cmp)(ElementType, ElementType))
+{
+    BTree btc;
+    InitiateBTree(&btc, e.t);
+    CopyElement((btc->e), e);
+    OrderInsertBT_withCmp(bt, btc, (*cmp));
+}
+void LevelOrderTraverse(BTree bt, void (*visit)(BTree), int orient)
+{
+    Queue queue;
+    InitiateQueue(&queue, Tpointer);
+    bool x = true;
+    ElementType pointer;
+    InitiateElement(&pointer, Tpointer);
+    while (bt)
+    {
+        (*visit)(bt);
+        if (orient == 0)
+        {
+            if (bt->left)
+            {
+                SetValue(pointer, &(bt->left));
+                EnQueue(&queue, pointer);
+            }
+            if (bt->right)
+            {
+                SetValue(pointer, &(bt->right));
+                EnQueue(&queue, pointer);
+            }
+        }
+        else
+        {
+            if (bt->right)
+            {
+                SetValue(pointer, &(bt->right));
+                EnQueue(&queue, pointer);
+            }
+            if (bt->left)
+            {
+                SetValue(pointer, &(bt->left));
+                EnQueue(&queue, pointer);
+            }
+        }
+        // PrintQueue(queue, "enqueue"); //debug
+        if (!IsEmptyQ(queue))
+        {
+            DeQueue(&queue, &pointer);
+            GetValue(pointer, &bt);
+        }
+        else{
+            break;
+        }
+        // PrintQueue(queue, "dequeue"); //debug
+    }
 }
 void InOrderTraverse(BTree bt, void (*visit)(BTree))
 {
@@ -229,6 +285,52 @@ void FindinBTree(BTree bt, ElementType e, BTree *result)
     }
     *result = bt;
 }
+void UpdateDepthofBT(BTree bt)
+{
+    if (!bt)
+        EXIT(ERROR, "null error when UpdateDepthofBT");
+    bt->depth = bt->parent ? bt->parent->depth + 1 : 0;
+}
+void FindMinBT(BTree bt, BTree *min)
+{
+    *min = bt;
+    while (*min && (*min)->left)
+    {
+        *min = (*min)->left;
+    }
+}
+void DeleteMinBT(BTree *bt, BTree *min)
+{
+    if ((*bt) == NULL)
+    {
+        (*min) = (*bt);
+        return;
+    }
+    FindMinBT(*bt, min);
+    BTree *pbt = (*min)->parent ? ((*min)->parent->left == (*min) ? &((*min)->parent->left)
+                                                                  : &((*min)->parent->right))
+                                : bt;
+    *pbt = (*min)->right;
+    //updata *pbt
+    if (*pbt)
+    {
+        (*pbt)->parent = (*min)->parent;
+        PreOrderTraverse((*pbt), UpdateDepthofBT);
+    }
+    //update *min
+    (*min)->left = NULL;
+    (*min)->right = NULL;
+    (*min)->depth = 0;
+}
+void ConvertBinaryTreeNewCmp(BTree *old, BTree *new, int (*newcmp)(ElementType, ElementType))
+{
+    BTree tmpbt;
+    while (*old)
+    {
+        DeleteMinBT(old, &tmpbt);
+        OrderInsertBT_withCmp(new, tmpbt, (*newcmp));
+    }
+}
 //huffmantree
 #include <CII.h>
 void visit_bt2(BTree bt) //debug
@@ -256,9 +358,9 @@ BTree tonext_huffmantree(BTree bt, int orient) //0 left,1 right
     }
     return bt; //return end of a ht tree
 }
-int CmpCiia(ElementType e1, ElementType e2)
+int CmpCia(ElementType e1, ElementType e2)
 {
-    if (e1.t != Tcii || e2.t != Tcii)
+    if (e1.t != Tci || e2.t != Tci)
         EXIT(ERROR, "error type when cii");
     return ((cii *)(e1.content))->a - ((cii *)(e2.content))->a;
 }
@@ -277,103 +379,55 @@ void FindMin_HuffmanT(BTree bt, BTree *min)
         pre = tonext_huffmantree(pre, 0)->left;
     }
 }
-void subDepth(BTree bt)
-{
-    bt->depth--;
-}
-void DeleteBTree_HuffmanTree(BTree *btroot, BTree delete)
-{
-    BTree right = (delete)->right;
-    while (right && ((cii *)(right->e.content))->b == inHT)
-    {
-        right = right->right;
-    }
-    PreOrderTraverse(right, subDepth);
-    if ((*btroot) == (delete))
-    {
-        (*btroot) = right;
-    }
-    else if (delete->parent->left == delete)
-    {
-        delete->parent->left = delete->right;
-    }
-    else
-    {
-        delete->parent->right = delete->right;
-    }
-    tonext_huffmantree(delete, 0)->left = NULL;
-    tonext_huffmantree(delete, 1)->right = NULL;
-    printf("delete\n");//debug
-    PreOrderTraverse(*btroot, visit_bt2); //debug
-}
 
 void ConverttoHuffmanTree(BTree *bt)
 {
-    if ((*bt)->t != Tcii)
+    if ((*bt)->t != Tci)
     {
-        EXIT(ERROR, "elementtype should be cii when ConverttoHuffmanTree");
+        EXIT(ERROR, "elementtype should be ci when ConverttoHuffmanTree");
     }
+    StackS stack;
+    InitiateStackS(&stack, Tpointer);
+    ElementType pointer;
+    InitiateElement(&pointer, Tpointer);
     BTree min = NULL;
     BTree min2 = NULL;
-    FindMin_HuffmanT(*bt, &min);
-    DeleteBTree_HuffmanTree(bt, min);
-    FindMin_HuffmanT(*bt, &min2);
-    DeleteBTree_HuffmanTree(bt, min2);
+    DeleteMinBT(bt, &min);
+    DeleteMinBT(bt, &min2);
     while (min && min2)
     {
         BTree new;
-        InitiateBTree(&new, Tcii);
-        cii ci = {'-', ((cii *)(min->e.content))->b + ((cii *)(min2->e.content))->b, notHT};
-        SetValue(new->e, &ci);
-        new->left = min;
-        new->right = min2;
-        min->parent = new;
-        min2->parent = new;
-        ((cii *)(min->e.content))->b = inHT;
-        ((cii *)(min2->e.content))->b = inHT;
-        OrderInsertBT_HuffmanT(bt, new);
+        InitiateBTree(&new, Tci);
+        ci cix = {'-', ((ci *)(min->e.content))->a + ((ci *)(min2->e.content))->a};
+        SetValue(new->e, &cix);
+        min->parent = min2->parent = new;
+        OrderInsertBT_withCmp(bt, new, CmpCia);
+        //store min min2
+        SetValue(pointer, &min);
+        PushSS(&stack, pointer);
+        SetValue(pointer, &min2);
+        PushSS(&stack, pointer);
 
-        
-        getchar();//debug
-        FindMin_HuffmanT(*bt, &min);
-        DeleteBTree_HuffmanTree(bt, min);
-        FindMin_HuffmanT(*bt, &min2);
-        DeleteBTree_HuffmanTree(bt, min2);
+        // getchar(); //debug
+        DeleteMinBT(bt, &min);
+        DeleteMinBT(bt, &min2);
     }
-}
-void updateDepth(BTree bt)
-{
-    bt->depth = bt->parent ? bt->parent->depth + 1 : 0;
-}
-void OrderInsertBT_HuffmanT(BTree *bt, BTree new)
-{
-    if ((*bt)->t != Tcii || new->t != Tcii)
-        EXIT(ERROR, "elementtype should be cii when OrderInsertBT_HuffmanT");
-    BTree pre = NULL;
-    BTree *now = bt;
-    while (*now)
+    OrderInsertBT_withCmp(bt, min, CmpCia);
+    bool x = true; //right
+    while (!IsEmptySS(stack))
     {
-        pre = *now;
-        int c = CmpCiia(new->e, (*now)->e);
-        if (c < 0)
+        PopSS(&stack, &pointer);
+        BTree tmp;
+        GetValue(pointer, &tmp);
+        if (x)
         {
-            now = &((tonext_huffmantree(*now, 0))->left);
+            tmp->parent->right = tmp;
         }
-        else //c >= 0,insert to right
+        else
         {
-            now = &((tonext_huffmantree(*now, 0))->right);
+            tmp->parent->left = tmp;
         }
+        x = !x;
     }
-    if (*now == NULL)
-    {
-        *now = new;
-        new->parent = pre;
-        PreOrderTraverse(new, updateDepth);
-    }
-    else
-    {
-        EXIT(ERROR, "OrderInsertBT_HuffmanT error");
-    }
-    printf("insert\n");//debug
-    PreOrderTraverse(*bt, visit_bt2); //debug
+    PreOrderTraverse(*bt, UpdateDepthofBT);
 }
