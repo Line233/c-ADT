@@ -1,6 +1,1 @@
-rectory `/c/Users/sp/Resource/code/c-ADT/ADT/BasicTypes'
-MAKE[1]: Leaving directory `/c/Users/sp/Resource/code/c-ADT/ADT'
-gcc -I ./ADT -I ./ADT/BasicTypes -g -o BinaryTreeTest.exe ADT/BinaryTree.o ADT/Queue.o ADT/StackS.o ADT/BasicTypes/CI.o ADT/BasicTypes/CII.o ADT/BasicTypes/Char.o ADT/BasicTypes/ElementType.o ADT/BasicTypes/Int.o ADT/BasicTypes/Pointer.o ADT/BasicTypes/Status.o ADT/BasicTypes/Triple.o BinaryTreeTest.o
-gcc -I ./ADT -I ./ADT/BasicTypes -g -o StackSTest.exe ADT/BinaryTree.o ADT/Queue.o ADT/StackS.o ADT/BasicTypes/CI.o ADT/BasicTypes/CII.o ADT/BasicTypes/Char.o ADT/BasicTypes/ElementType.o ADT/BasicTypes/Int.o ADT/BasicTypes/Pointer.o
-ADT/BasicTypes/Status.o ADT/BasicTypes/Triple.o StackSTest.o
-PS C:\Users\sp\Resource\code\c-ADT>
+hello world

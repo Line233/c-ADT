@@ -44,21 +44,21 @@ void BinaryTreeTest()
             TEST("bt with only one element(in three traverse order)", 2);
             InitiateBTree(&bt, e.t);
             CopyElement((bt->e), e);
-            InOrderTraverse(bt, visit_bt);
-            PreOrderTraverse(bt, visit_bt);
-            PostOrderTraverse(bt, visit_bt);
+            InOrderTraverse_BT(bt, visit_bt);
+            PreOrderTraverse_BT(bt, visit_bt);
+            PostOrderTraverse_BT(bt, visit_bt);
         }
         else
         {
-            OrderInsertBT(&bt, e);
+            OrderInsertElement_BT(&bt, e, CmpElement);
         }
     }
-    TEST("print bt in order(InOrderTraverse)", 2);
-    InOrderTraverse(bt, visit_bt);
-    TEST("PreOrderTraverse", 2);
-    PreOrderTraverse(bt, visit_bt);
-    TEST("PostOrderTraverse", 2);
-    PostOrderTraverse(bt, visit_bt);
+    TEST("print bt in order(InOrderTraverse_BT)", 2);
+    InOrderTraverse_BT(bt, visit_bt);
+    TEST("PreOrderTraverse_BT", 2);
+    PreOrderTraverse_BT(bt, visit_bt);
+    TEST("PostOrderTraverse_BT", 2);
+    PostOrderTraverse_BT(bt, visit_bt);
 
     //test create inorder
     TEST("Create in order", 1);
@@ -83,7 +83,7 @@ void BinaryTreeTest()
     }
     ElementType *charss = chars;
     CreateInorderBT(&btforc, &charss, &n, 0);
-    PreOrderTraverse(btforc, visit_bt);
+    PreOrderTraverse_BT(btforc, visit_bt);
 
     //public
     fclose(f);
@@ -107,33 +107,30 @@ void HuffmanTreeTest()
         ci cix = {c, 1};
         SetValue(e, &cix);
         BTree find = NULL;
-        FindinBTree(bt, e, &find);
+        Find_BT(bt, e, &find);
         if (find == NULL)
         {
-            OrderInsertBT(&bt, e);
+            OrderInsertElement_BT(&bt, e, CmpElement);
         }
         else
         {
             ((ci *)find->e.content)->a++;
         }
         c = fgetc(f);
-        // PreOrderTraverse(bt, visit_bt); //debug
-        // getchar();//debug
     }
-    printf("bt is\n");
-    PreOrderTraverse(bt, visit_bt);
+    printf("alpha binarytree is(pre order)\n");
+    PreOrderTraverse_BT(bt, visit_bt);
+
     //convert bt sort by ci.a
     BTree btbya = NULL;
-    ConvertBinaryTreeNewCmp(&bt, &btbya, CmpCia);
-    printf("converted bt is\n");
-    InOrderTraverse(btbya, visit_bt);
+    Newstruct_BT(&bt, &btbya, Cmp_ci_a);
+    printf("\n\nweight binarytree is(in order)\n");
+    InOrderTraverse_BT(btbya, visit_bt);
 
+    //construct huffmantree
+    printf("\n\nhuffmantree  is(level order)\n");
     ConverttoHuffmanTree(&btbya);
-    printf("huffmantree is\n");
-
-    PreOrderTraverse(btbya,visit_bt);
-    printf("level traverse\n");
-    LevelOrderTraverse(btbya, visit_bt,1);
+    LevelOrderTraverse_BT(btbya, visit_bt, 1);
     //
     fclose(f);
     printf("close successfully\n\n\n");

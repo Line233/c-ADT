@@ -16,30 +16,30 @@ struct btree
     int depth;
 };
 void InitiateBTree(BTree *bt, type t);
-void OrderInsertBT(BTree* bt, ElementType e);
-void InOrderTraverse(BTree bt, void (*visit)(BTree));
-void InOrderTraverseR(BTree bt, void (*visit)(BTree));
-void PostOrderTraverse(BTree bt, void (*visit)(BTree));
-void PreOrderTraverse(BTree bt, void (*visit)(BTree));
+void CreateBTree(BTree *bt, ElementType e);
+
+//insert
+void OrderInsertElement_BT(BTree *bt, ElementType e, int(*cmp)(ElementType, ElementType));
+void OrderInsert_BT(BTree *bt, BTree node, int (*cmp)(ElementType, ElementType));
+//traverse
+void InOrderTraverse_BT(BTree bt, void (*visit)(BTree));
+void InOrderTraverse_BT_R(BTree bt, void (*visit)(BTree));
+void PostOrderTraverse_BT(BTree bt, void (*visit)(BTree));
+void PreOrderTraverse_BT(BTree bt, void (*visit)(BTree));
+void LevelOrderTraverse_BT(BTree bt, void (*visit)(BTree), int orient);
+//find
+void Find_BT(BTree bt, ElementType e, BTree *result);
+void FindMin_BT(BTree bt, BTree *min);
+//delete
+void DeleteMin_BT(BTree *bt, BTree *min);
+//copy
+void Copy(BTree *copy, BTree bt);
+//normal
+void Newstruct_BT(BTree *old, BTree *new, int (*newcmp)(ElementType, ElementType));
+void UpdateDepth_BT(BTree bt);
 void CreateInorderBT(BTree *bt, ElementType **es, int *n, int depth);
-void FindinBTree(BTree bt, ElementType e, BTree *result);
-void LevelOrderTraverse(BTree bt, void (*visit)(BTree),int orient);
-
-
-void ConvertBinaryTreeNewCmp(BTree* old,BTree* new,int (*newcmp)(ElementType,ElementType));
-void DeleteMinBT(BTree* bt,BTree* min);
-void FindMinBT(BTree bt,BTree* min);
-void UpdateDepthofBT(BTree bt);
-void OrderInsertBT_withCmp(BTree *bt, BTree node, int (*cmp)(ElementType, ElementType));
-void OrderInsertElementBT_withCmp(BTree *bt, ElementType e, int (*cmp)(ElementType, ElementType));
-
 
 //to huffman
-#define inHT 0
-#define notHT 1
+int Cmp_ci_a(ElementType e1, ElementType e2);
 void ConverttoHuffmanTree(BTree *bt);
-void FindMin_HuffmanT(BTree bt, BTree *min);
-void OrderInsertBT_HuffmanT(BTree *bt, BTree new);
-
-int CmpCia(ElementType e1, ElementType e2);
 #endif
