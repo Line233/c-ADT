@@ -229,45 +229,8 @@ void FindinBTree(BTree bt, ElementType e, BTree *result)
     }
     *result = bt;
 }
-
+//huffmantree
 #include <CII.h>
-
-void FindMin_HuffmanT(BTree bt, BTree *min)
-{
-    if (bt->t != Tcii)
-    {
-        EXIT(ERROR, "elementtype should be cii when findmin_huffman");
-    }
-    BTree pre = bt;
-    *min = NULL;
-    while (pre->left)
-    {
-        cii *ci = (cii *)pre->e.content;
-        if (ci->b == notHT) //ok node
-            *min = pre;
-        pre = pre->left;
-    }
-}
-void DeleteBTree_HuffmanTree(BTree* btroot,BTree* bt)
-{
-    BTree right=(*bt)->right;
-    while (right && ((cii *)(right->e.content))->b == inHT)
-    {
-        right = right->right;
-    }
-    if((*btroot)==(*bt))
-    {
-
-    }
-    if (bt->parent->left == bt)
-    {
-        bt->parent->left = bt->right;
-    }
-    else
-    {
-        bt->parent->right = bt->right;
-    }
-}
 void visit_bt2(BTree bt) //debug
 {
     for (int i = 0; i < bt->depth; i++)
@@ -277,6 +240,73 @@ void visit_bt2(BTree bt) //debug
     PrintElement(bt->e);
     printf("\n");
 }
+BTree tonext_huffmantree(BTree bt, int orient) //0 left,1 right
+{
+    if (!bt)
+        EXIT(ERROR, "null error tonext_huffmantree");
+    if (orient == 0)
+    {
+        while (bt->left != NULL && ((cii *)(bt->left->e.content))->b == inHT)
+            bt = bt->left;
+    }
+    else
+    {
+        while (bt->right != NULL && ((cii *)(bt->right->e.content))->b == inHT)
+            bt = bt->right;
+    }
+    return bt; //return end of a ht tree
+}
+int CmpCiia(ElementType e1, ElementType e2)
+{
+    if (e1.t != Tcii || e2.t != Tcii)
+        EXIT(ERROR, "error type when cii");
+    return ((cii *)(e1.content))->a - ((cii *)(e2.content))->a;
+}
+
+void FindMin_HuffmanT(BTree bt, BTree *min)
+{
+    if (bt->t != Tcii)
+    {
+        EXIT(ERROR, "elementtype should be cii when findmin_huffman");
+    }
+    BTree pre = bt;
+    *min = NULL;
+    while (pre)
+    {
+        *min = pre;
+        pre = tonext_huffmantree(pre, 0)->left;
+    }
+}
+void subDepth(BTree bt)
+{
+    bt->depth--;
+}
+void DeleteBTree_HuffmanTree(BTree *btroot, BTree delete)
+{
+    BTree right = (delete)->right;
+    while (right && ((cii *)(right->e.content))->b == inHT)
+    {
+        right = right->right;
+    }
+    PreOrderTraverse(right, subDepth);
+    if ((*btroot) == (delete))
+    {
+        (*btroot) = right;
+    }
+    else if (delete->parent->left == delete)
+    {
+        delete->parent->left = delete->right;
+    }
+    else
+    {
+        delete->parent->right = delete->right;
+    }
+    tonext_huffmantree(delete, 0)->left = NULL;
+    tonext_huffmantree(delete, 1)->right = NULL;
+    printf("delete\n");//debug
+    PreOrderTraverse(*btroot, visit_bt2); //debug
+}
+
 void ConverttoHuffmanTree(BTree *bt)
 {
     if ((*bt)->t != Tcii)
@@ -286,32 +316,34 @@ void ConverttoHuffmanTree(BTree *bt)
     BTree min = NULL;
     BTree min2 = NULL;
     FindMin_HuffmanT(*bt, &min);
-    DeleteBTree_HuffmanTree(min);
+    DeleteBTree_HuffmanTree(bt, min);
     FindMin_HuffmanT(*bt, &min2);
-    DeleteBTree_HuffmanTree(min2);
+    DeleteBTree_HuffmanTree(bt, min2);
     while (min && min2)
     {
         BTree new;
         InitiateBTree(&new, Tcii);
-        cii ci = {'-', ((cii *)(min->e.content))->b + ((cii *)(min2->e.content))->b, inHT};
+        cii ci = {'-', ((cii *)(min->e.content))->b + ((cii *)(min2->e.content))->b, notHT};
         SetValue(new->e, &ci);
         new->left = min;
-        new->left = min2;
+        new->right = min2;
+        min->parent = new;
+        min2->parent = new;
+        ((cii *)(min->e.content))->b = inHT;
+        ((cii *)(min2->e.content))->b = inHT;
         OrderInsertBT_HuffmanT(bt, new);
 
-        PreOrderTraverse(*bt, visit_bt2);
-
+        
+        getchar();//debug
         FindMin_HuffmanT(*bt, &min);
-        DeleteBTree_HuffmanTree(min);
+        DeleteBTree_HuffmanTree(bt, min);
         FindMin_HuffmanT(*bt, &min2);
-        DeleteBTree_HuffmanTree(min2);
+        DeleteBTree_HuffmanTree(bt, min2);
     }
 }
-int CmpCiib(ElementType e1, ElementType e2)
+void updateDepth(BTree bt)
 {
-    if (e1.t != Tcii || e2.t != Tcii)
-        EXIT(ERROR, "error type when cii");
-    return ((cii *)(e1.content))->b - ((cii *)(e2.content))->b;
+    bt->depth = bt->parent ? bt->parent->depth + 1 : 0;
 }
 void OrderInsertBT_HuffmanT(BTree *bt, BTree new)
 {
@@ -321,31 +353,27 @@ void OrderInsertBT_HuffmanT(BTree *bt, BTree new)
     BTree *now = bt;
     while (*now)
     {
-        int c = CmpCiib(new->e, (*now)->e);
+        pre = *now;
+        int c = CmpCiia(new->e, (*now)->e);
         if (c < 0)
         {
-            now = &((*now)->left);
-            while (*now != NULL && ((cii *)((*now)->e.content))->b == inHT)
-            {
-                *now = (*now)->left;
-            } //end when *now==NULL or b!=0
+            now = &((tonext_huffmantree(*now, 0))->left);
         }
         else //c >= 0,insert to right
         {
-            now = &((*now)->right);
-            while (*now != NULL && ((cii *)((*now)->e.content))->b == inHT)
-            {
-                *now = (*now)->right;
-            } //end when *now==NULL or b!=0
+            now = &((tonext_huffmantree(*now, 0))->right);
         }
     }
     if (*now == NULL)
     {
         *now = new;
         new->parent = pre;
+        PreOrderTraverse(new, updateDepth);
     }
     else
     {
         EXIT(ERROR, "OrderInsertBT_HuffmanT error");
     }
+    printf("insert\n");//debug
+    PreOrderTraverse(*bt, visit_bt2); //debug
 }

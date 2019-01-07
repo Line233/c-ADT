@@ -104,7 +104,7 @@ void HuffmanTreeTest()
     while (c != EOF)
     {
         // printf("%c",c);//debug
-        cii ci = {c, 0, notHT};
+        cii ci = {c, 1, notHT};
         SetValue(e, &ci);
         BTree find = NULL;
         FindinBTree(bt, e, &find);
@@ -125,7 +125,7 @@ void HuffmanTreeTest()
     printf("huffmantree is\n");
 
     ConverttoHuffmanTree(&bt);
-    PreOrderTraverse(bt,visit_bt);
+    PreOrderTraverse(bt, visit_bt);
     //
     fclose(f);
     printf("close successfully\n\n\n");
