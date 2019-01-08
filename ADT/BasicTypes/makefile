@@ -1,6 +1,6 @@
 CC=gcc -g
 OBJstatus=Status.o
-OBJtype=Int.o Triple.o Pointer.o Char.o CII.o CI.o
+OBJtype=Int.o Triple.o Pointer.o Char.o CII.o CI.o CodeNode.o
 OBJelement= ElementType.o 
 
 

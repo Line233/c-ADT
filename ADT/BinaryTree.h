@@ -28,7 +28,7 @@ void PostOrderTraverse_BT(BTree bt, void (*visit)(BTree));
 void PreOrderTraverse_BT(BTree bt, void (*visit)(BTree));
 void LevelOrderTraverse_BT(BTree bt, void (*visit)(BTree), int orient);
 //find
-void Find_BT(BTree bt, ElementType e, BTree *result);
+void Find_BT(BTree bt, ElementType e, BTree *result,int (*cmp)(ElementType,ElementType));
 void FindMin_BT(BTree bt, BTree *min);
 //delete
 void DeleteMin_BT(BTree *bt, BTree *min);
@@ -42,4 +42,16 @@ void CreateInorderBT(BTree *bt, ElementType **es, int *n, int depth);
 //to huffman
 int Cmp_ci_a(ElementType e1, ElementType e2);
 void ConverttoHuffmanTree(BTree *bt);
+//
+int cmp_pcodenode_a(ElementType e1,ElementType e2);
+int cmp_pcodenode_c(ElementType e1,ElementType e2);
+int add_pcodenode_a(ElementType e1,ElementType e2);
+
+void ConstructHuffmantree(BTree *alphatree, BTree *huffmantree);
+void newcodenode(codenode **c, char ch, int a);
+void print_pcodenode_inBT(BTree bt);
+void coding(BTree alphatree, char *filename, char *outname);
+void decode(BTree huffmantree, char *filename, char *outname);
+void print_AlphaTree(BTree alphatree, char *filename);
+
 #endif

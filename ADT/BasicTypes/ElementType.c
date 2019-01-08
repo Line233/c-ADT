@@ -44,6 +44,23 @@ void GetValue(ElementType e, void *value)
     (*copy_e[e.t])(value, e.content);
 }
 
+void CopyElementReferrence(ElementType *copy, ElementType a)
+{
+    if (copy->t != a.t)
+        EXIT(ERROR, "error type when CopyElementReferrence");
+    copy->content = a.content;
+}
+
+void GetContentPointer(ElementType e, void **p)
+{
+    *p = e.content;
+}
+void SetContentPointer(ElementType *e, void *p)
+{
+    if (!e)
+        EXIT(ERROR, "null cant be set when SetContentPointer");
+    e->content = p;
+}
 //for each type
 //for int
 

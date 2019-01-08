@@ -1,5 +1,5 @@
 CC=gcc -I ./BasicTypes -g
-OBJADT=BinaryTree.o StackS.o Queue.o
+OBJADT=BinaryTree.o StackS.o Queue.o StaticList.o
 #test
 
 

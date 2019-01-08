@@ -2,6 +2,7 @@
 #include <malloc.h>
 #include "StackS.h"
 #include "Queue.h"
+#include "StaticList.h"
 
 //insert
 void InitiateBTree(BTree *bt, type t)
@@ -245,14 +246,13 @@ void InOrderTraverse_BT_R(BTree bt, void (*visit)(BTree))
     printf("\n");
 }
 //find
-void Find_BT(BTree bt, ElementType e, BTree *result)
+void Find_BT(BTree bt, ElementType e, BTree *result, int (*cmp)(ElementType, ElementType))
 {
     if (bt != NULL && bt->t != e.t)
         EXIT(ERROR, "type different when Find_BT");
-
     while (bt)
     {
-        int c = CmpElement(e, bt->e);
+        int c = (*cmp)(e, bt->e);
         if (c == 0)
         {
             break;
@@ -269,6 +269,7 @@ void Find_BT(BTree bt, ElementType e, BTree *result)
     }
     *result = bt;
 }
+
 void FindMin_BT(BTree bt, BTree *min)
 {
     *min = bt;
@@ -382,9 +383,9 @@ int Cmp_ci_a(ElementType e1, ElementType e2)
 }
 void ConverttoHuffmanTree(BTree *bt)
 {
-    if ((*bt)->t != Tci)
+    if ((*bt)->t != Tpointer)
     {
-        EXIT(ERROR, "elementtype should be ci when ConverttoHuffmanTree");
+        EXIT(ERROR, "elementtype should be tpointer when ConverttoHuffmanTree");
     }
     StackS stack;
     InitiateStackS(&stack, Tpointer);
@@ -397,11 +398,13 @@ void ConverttoHuffmanTree(BTree *bt)
     while (min && min2)
     {
         BTree new;
-        InitiateBTree(&new, Tci);
-        ci cix = {'-', ((ci *)(min->e.content))->a + ((ci *)(min2->e.content))->a};
-        SetValue(new->e, &cix);
+        InitiateBTree(&new, Tpointer);
+        //now codenodt
+        union_pcodenode(min->e, min2->e, &pointer);
+        CopyElement(new->e, pointer);
+        OrderInsert_BT(bt, new, cmp_pcodenode_a);
+
         min->parent = min2->parent = new;
-        OrderInsert_BT(bt, new, Cmp_ci_a);
         //store min min2
         SetValue(pointer, &min);
         PushSS(&stack, pointer);
@@ -430,4 +433,249 @@ void ConverttoHuffmanTree(BTree *bt)
         x = !x;
     }
     PreOrderTraverse_BT(*bt, UpdateDepth_BT);
+}
+int cmp_pcodenode_a(ElementType e1, ElementType e2)
+{
+    if (e1.t != Tpointer || e2.t != Tpointer)
+        EXIT(ERROR, "error type when cmp_pcodenode_a");
+    codenode *a1, *a2;
+    GetValue(e1, &a1);
+    GetValue(e2, &a2);
+    return a1->a - a2->a;
+}
+int cmp_pcodenode_c(ElementType e1, ElementType e2)
+{
+    if (e1.t != Tpointer || e2.t != Tpointer)
+        EXIT(ERROR, "error type when cmp_pcodenode_a");
+    codenode *a1, *a2;
+    GetValue(e1, &a1);
+    GetValue(e2, &a2);
+    return a1->c - a2->c;
+}
+int add_pcodenode_a(ElementType e1, ElementType e2)
+{
+    if (e1.t != Tpointer || e2.t != Tpointer)
+        EXIT(ERROR, "error type when cmp_pcodenode_a");
+    codenode *a1, *a2;
+    GetValue(e1, &a1);
+    GetValue(e2, &a2);
+    return a1->a + a2->a;
+}
+int union_pcodenode(ElementType e1, ElementType e2, ElementType *u)
+{
+    codenode *a1, *a2;
+    GetValue(e1, &a1);
+    GetValue(e2, &a2);
+    codenode *ux;
+    newcodenode(&ux, '-', a1->a + a2->a);
+    SetValue(*u, &ux);
+}
+void newcodenode(codenode **c, char ch, int a)
+{
+    *c = (codenode *)malloc(sizeof(codenode));
+    if (!(*c))
+        EXIT(ERROR, "no space newcodenode");
+    initiate_codenode(*c);
+    (*c)->c = ch;
+    (*c)->a = a;
+}
+
+void print_pcodenode(ElementType e)
+{
+    codenode *c;
+    GetValue(e, &c);
+    print_codenode(c);
+    printf("\n");
+}
+void print_pcodenode_inBT(BTree bt)
+{
+    for (int i = 0; i < bt->depth; i++)
+    {
+        printf(".");
+    }
+    print_pcodenode(bt->e);
+}
+void fullcode(ElementType e, char *c, int pos)
+{
+    codenode *cn;
+    GetValue(e, &cn);
+    cn->code = (char *)malloc(sizeof(char) * (pos + 1));
+    if (!cn->code)
+        EXIT(ERROR, "no space when GetCodefromHuffmanTree");
+    for (int i = 0; i < pos; i++)
+    {
+        *(cn->code + i) = *(c + i);
+    }
+    *(cn->code + pos) = '\0';
+}
+void newelem(char c, ElementType **e)
+{
+    if ((*e) == NULL)
+    {
+        (*e) = (ElementType *)malloc(sizeof(ElementType));
+        if (!*e)
+            EXIT(ERROR, "error newelem");
+        InitiateElement(*e, Tpointer);
+        codenode *cn;
+        newcodenode(&cn, c, 1);
+        SetValue(**e, &cn);
+    }
+    else
+    {
+        codenode *cn;
+        GetValue(**e, &cn);
+        cn->c = c;
+    }
+}
+void GetCodefromHuffmanTree(BTree huffmantree, char *c, int pos)
+{
+    if (huffmantree->left)
+    {
+        *(c + pos) = '0';
+        GetCodefromHuffmanTree(huffmantree->left, c, pos + 1);
+    }
+    if (huffmantree->right)
+    {
+        *(c + pos) = '1';
+        GetCodefromHuffmanTree(huffmantree->right, c, pos + 1);
+    }
+    if (huffmantree->left == NULL && huffmantree->right == NULL)
+    {
+        //leaf
+        fullcode(huffmantree->e, c, pos);
+    }
+}
+void ConstructHuffmantree(BTree *alphatree, BTree *huffmantree)
+{
+    if ((*alphatree)->t != Tpointer)
+        EXIT(ERROR, "error argument ConstructHuffmantree");
+    //alpatree should be contrusted //huffmantree should not be constructed
+    BTree alphatree_a = NULL;
+    Newstruct_BT(alphatree, &alphatree_a, cmp_pcodenode_a);
+    // printf("alphatree_a\n");                               //debug
+    // InOrderTraverse_BT(alphatree_a, print_pcodenode_inBT); //debug
+    // ConverttoHuffmanTree(&alphatree_a);
+    ConverttoHuffmanTree(&alphatree_a);
+    // printf("huffman tree is\n");                                 //debug
+    // LevelOrderTraverse_BT(alphatree_a, print_pcodenode_inBT, 1); //debug
+    *huffmantree = alphatree_a;
+    char cs[255];
+    GetCodefromHuffmanTree(*huffmantree, cs, 0);
+    // printf("huffman tree is\n");                                 //debug
+    // LevelOrderTraverse_BT(alphatree_a, print_pcodenode_inBT, 1); //debug
+    PreOrderTraverse_BT(*alphatree, print_pcodenode_inBT);
+}
+void FindCode(BTree alphatree, ElementType e, char **code)
+{
+    BTree r;
+    Find_BT(alphatree, e, &r, cmp_pcodenode_c);
+    codenode *cn;
+    GetValue(r->e, &cn);
+    *code = cn->code;
+}
+
+void coding(BTree alphatree, char *filename, char *outname)
+{
+    FILE *f = fopen(filename, "r");
+    FILE *out = fopen(outname, "w");
+
+    ElementType *e = NULL;
+    char **cp;
+    char c;
+    c = fgetc(f);
+
+    while (c != EOF)
+    {
+        newelem(c, &e);
+        FindCode(alphatree, *e, cp);
+        fprintf(out, "%s", *cp);
+        // printf("%s",*cp);
+        c = fgetc(f);
+    }
+
+    //
+    fclose(f);
+    fclose(out);
+}
+char getchar_inE(ElementType e)
+{
+    codenode *cn;
+    GetValue(e, &cn);
+    return cn->c;
+}
+void decode(BTree huffmantree, char *filename, char *outname)
+{
+    FILE *f = fopen(filename, "r");
+    FILE *out = fopen(outname, "w");
+    //
+    BTree now = huffmantree;
+    char c;
+    c = fgetc(f);
+    while (c != EOF)
+    {
+        if (c == '0')
+        {
+            now = now->left;
+        }
+        else
+        {
+            now = now->right;
+        }
+        if (now->left == now->right && now->left == NULL)
+        {
+            fprintf(out, "%c", getchar_inE(now->e));
+            // printf("%c", getchar_inE(now->e));
+            now = huffmantree;
+        }
+        c = fgetc(f);
+    }
+    //
+    fclose(f);
+    fclose(out);
+}
+void print_HuffmanTree(BTree huffman, char *filename)
+{
+    FILE *f = fopen(filename, "w");
+
+    //
+    fclose(f);
+}
+void print_AlphaTree(BTree alphatree, char *filename)
+{
+    FILE *f = fopen(filename, "w");
+    
+    //inorder traverse
+    BTree bt=alphatree;
+    //variables
+    StackS stack;
+    InitiateStackS(&stack, Tpointer);
+    ElementType e;
+    InitiateElement(&e, Tpointer);
+    //
+    BTree p = bt;
+    //traverse function1
+    while (p || !IsEmptySS(stack))
+    {
+        if (p) //should be pushed
+        {
+            SetValue(e, &p);
+            PushSS(&stack, e);
+            p = p->left;
+        }
+        else
+        { //p is NULL,returned from left or right.first pop,then insert right
+            PopSS(&stack, &e);
+            GetValue(e, &p);
+            // (*visit)(p);
+            //visit
+            codenode* cn;
+            GetValue(p->e,&cn);
+            fprintf(f,"%d %d %s\n",cn->c,cn->a,cn->code);
+            //
+            p = p->right;
+        }
+    }
+
+    //
+    fclose(f);
 }

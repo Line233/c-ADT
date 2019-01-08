@@ -98,42 +98,44 @@ void HuffmanTreeTest()
         EXIT(ERROR, "open file error");
     char c;
     ElementType e;
-    InitiateElement(&e, Tci);
+    InitiateElement(&e, Tpointer);//pointer to codenode
     BTree bt = NULL;
     c = fgetc(f);
     while (c != EOF)
     {
         // printf("%c",c);//debug
-        ci cix = {c, 1};
-        SetValue(e, &cix);
+        codenode* cn;
+        newcodenode(&cn,c,1);
+        SetValue(e, &cn);
         BTree find = NULL;
-        Find_BT(bt, e, &find);
+        Find_BT(bt, e, &find,cmp_pcodenode_c);
         if (find == NULL)
         {
-            OrderInsertElement_BT(&bt, e, CmpElement);
+            OrderInsertElement_BT(&bt, e, cmp_pcodenode_c);
         }
         else
         {
-            ((ci *)find->e.content)->a++;
+            codenode* cn2;
+            GetValue(find->e,&cn2);
+            cn2->a++;
         }
         c = fgetc(f);
     }
     printf("alpha binarytree is(pre order)\n");
-    PreOrderTraverse_BT(bt, visit_bt);
-
-    //convert bt sort by ci.a
-    BTree btbya = NULL;
-    Newstruct_BT(&bt, &btbya, Cmp_ci_a);
-    printf("\n\nweight binarytree is(in order)\n");
-    InOrderTraverse_BT(btbya, visit_bt);
-
-    //construct huffmantree
-    printf("\n\nhuffmantree  is(level order)\n");
-    ConverttoHuffmanTree(&btbya);
-    LevelOrderTraverse_BT(btbya, visit_bt, 1);
+    PreOrderTraverse_BT(bt, print_pcodenode_inBT);
+    BTree huffmantree;
+    ConstructHuffmantree(&bt, &huffmantree);
     //
     fclose(f);
     printf("close successfully\n\n\n");
+
+    coding(bt,"./TestData/HuffmanTreeTest.txt","./TestData/huffmanout.txt");
+    printf("coding over\n\n");
+    decode(huffmantree,"./TestData/huffmanout.txt","./TestData/huffmantreedecode.txt");
+    printf("decode over\n\n");
+
+    print_AlphaTree(bt,"./TestData/AlphaTree_Huffman.txt");
+    printf("print alphatree over\n");
     getchar();
 }
 int main()
