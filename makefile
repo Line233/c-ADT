@@ -1,34 +1,41 @@
-CC=gcc -I ./ADT -I ./ADT/BasicTypes -g
-OBJBasicElement=${./ADT/BasicTypes/*.o}
-OBJADT=${./ADT/*.o}
+CC=gcc -g 
+Iarg= -I ./ADT -I ./ADT/BasicTypes 
+
+ADT_PATH=./ADT
+ADT_SOURCE:=${wildcard $(ADT_PATH)/*.c}
+ADT_HEAD:=${patsubst %.c,%.h,$(ADT_SOURCE) }
+ADT_OBJ=${patsubst %.c,%.o,$(ADT_SOURCE)}
+
+BASICTYPE_PATH=./ADT/BasicTypes
+BASICTYPE_SOURCE:=${wildcard $(BASICTYPE_PATH)/*.c}
+BASICTYPE_HEAD:=${patsubst %.c,%.h,$(BASICTYPE_SOURCE) }
+BASICTYPE_OBJ=${patsubst %.c,%.o,$(BASICTYPE_SOURCE)}
+
 
 
 all:BinaryTreeTest.exe ElementTypeTest.exe StackSTest.exe
 
-BinaryTreeTest.exe: ./ADT/*.o ./ADT/BasicTypes/*.o BinaryTreeTest.o
-	$(CC) -o $@ $^
+BinaryTreeTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ)  BinaryTreeTest.o
+	$(CC) $(Iarg)  -o $@ $^
 
-StackSTest.exe: ./ADT/*.o ./ADT/BasicTypes/*.o StackSTest.o
-	$(CC) -o $@ $^
+StackSTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ) StackSTest.o
+	$(CC) $(Iarg) -o $@ $^
 
-ElementTypeTest.exe:./ADT/BasicTypes/*.o ElementTypeTest.o
-	$(CC) -o $@ $^ 
+ElementTypeTest.exe: $(ADT_OBJ) $(BASICTYPE_OBJ) ElementTypeTest.o
+	$(CC) $(Iarg) -o $@ $^ 
 
-./ADT/*.o:./ADT/*.c ./ADT/*.h
-	cd ./ADT && MAKE
-./ADT/BasicTypes/*.o:./ADT/BasicTypes/*.c ./ADT/BasicTypes/*.h
-	cd ./ADT/BasicTypes && MAKE
+$(ADT_OBJ):$(ADT_SOURCE) $(ADT_HEAD) $(BASICTYPE_SOURCE)
+	$(CC) $(Iarg) -c $*.c -o $*.o
 
-%.o:%.c %.h
-	$(CC) -c $*.c
+$(BASICTYPE_OBJ):$(BASICTYPE_SOURCE) $(BASICTYPE_HEAD)
+	$(CC) $(Iarg) -c $*.c -o $*.o
+
+%.o:%.c
+	$(CC) $(Iarg) -c $<
 
 clean:
+	rm $(ADT_OBJ) $(BASICTYPE_OBJ)
 	rm BinaryTreeTest.o ElementTypeTest.o StackSTest.o
-	cd ./ADT && MAKE clean
-	
-
-# ElementTypeTest.exe:$(Types)
-#      $(CC) -o ElementTypeTest.exe $(Types)
 
 
 # $@: the target filename.

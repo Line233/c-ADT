@@ -1,6 +1,6 @@
 #include "BinaryTree.h"
 #include <stdio.h>
-#include "BinaryTree.h"
+#include"BinaryTree.h"
 #include "ElementType.h"
 #include "Char.h"
 
