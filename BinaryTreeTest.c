@@ -124,15 +124,15 @@ void HuffmanTreeTest()
     printf("alpha binarytree is(pre order)\n");
     PreOrderTraverse_BT(bt, print_pcodenode_inBT);
     BTree huffmantree;
-    ConstructHuffmantree(&bt, &huffmantree);
+    HuffmanConstruct(&bt, &huffmantree);
     //
     fclose(f);
     printf("close successfully\n\n\n");
 
-    coding(bt,"./TestData/HuffmanTreeTest.txt","./TestData/huffmanout.txt");
-    printf("coding over\n\n");
-    decode(huffmantree,"./TestData/huffmanout.txt","./TestData/huffmantreedecode.txt");
-    printf("decode over\n\n");
+    HuffmanCode(bt,"./TestData/HuffmanTreeTest.txt","./TestData/huffmanout.txt");
+    printf("HuffmanCode over\n\n");
+    HuffmanDecode(huffmantree,"./TestData/huffmanout.txt","./TestData/huffmantreeHuffmanDecode.txt");
+    printf("HuffmanDecode over\n\n");
 
     print_AlphaTree(bt,"./TestData/AlphaTree_Huffman.txt");
     printf("print alphatree over\n");

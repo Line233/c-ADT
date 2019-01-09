@@ -47,11 +47,14 @@ int cmp_pcodenode_a(ElementType e1,ElementType e2);
 int cmp_pcodenode_c(ElementType e1,ElementType e2);
 int add_pcodenode_a(ElementType e1,ElementType e2);
 
-void ConstructHuffmantree(BTree *alphatree, BTree *huffmantree);
+
 void newcodenode(codenode **c, char ch, int a);
 void print_pcodenode_inBT(BTree bt);
-void coding(BTree alphatree, char *filename, char *outname);
-void decode(BTree huffmantree, char *filename, char *outname);
+
 void print_AlphaTree(BTree alphatree, char *filename);
 
+//huffmancode
+void HuffmanCode(BTree alphatree, char *filename, char *outname);
+void HuffmanDecode(BTree huffmantree, char *filename, char *outname);
+void HuffmanConstruct(BTree *alphatree, BTree *huffmantree);
 #endif

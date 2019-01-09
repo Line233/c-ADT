@@ -375,6 +375,15 @@ void CreateInorderBT(BTree *bt, ElementType **es, int *n, int depth)
 
 //huffmantree
 #include <CII.h>
+int union_pcodenode(ElementType e1, ElementType e2, ElementType *u)
+{
+    codenode *a1, *a2;
+    GetValue(e1, &a1);
+    GetValue(e2, &a2);
+    codenode *ux;
+    newcodenode(&ux, '-', a1->a + a2->a);
+    SetValue(*u, &ux);
+}
 int Cmp_ci_a(ElementType e1, ElementType e2)
 {
     if (e1.t != Tci || e2.t != Tci)
@@ -461,15 +470,7 @@ int add_pcodenode_a(ElementType e1, ElementType e2)
     GetValue(e2, &a2);
     return a1->a + a2->a;
 }
-int union_pcodenode(ElementType e1, ElementType e2, ElementType *u)
-{
-    codenode *a1, *a2;
-    GetValue(e1, &a1);
-    GetValue(e2, &a2);
-    codenode *ux;
-    newcodenode(&ux, '-', a1->a + a2->a);
-    SetValue(*u, &ux);
-}
+
 void newcodenode(codenode **c, char ch, int a)
 {
     *c = (codenode *)malloc(sizeof(codenode));
@@ -545,26 +546,7 @@ void GetCodefromHuffmanTree(BTree huffmantree, char *c, int pos)
         fullcode(huffmantree->e, c, pos);
     }
 }
-void ConstructHuffmantree(BTree *alphatree, BTree *huffmantree)
-{
-    if ((*alphatree)->t != Tpointer)
-        EXIT(ERROR, "error argument ConstructHuffmantree");
-    //alpatree should be contrusted //huffmantree should not be constructed
-    BTree alphatree_a = NULL;
-    Newstruct_BT(alphatree, &alphatree_a, cmp_pcodenode_a);
-    // printf("alphatree_a\n");                               //debug
-    // InOrderTraverse_BT(alphatree_a, print_pcodenode_inBT); //debug
-    // ConverttoHuffmanTree(&alphatree_a);
-    ConverttoHuffmanTree(&alphatree_a);
-    // printf("huffman tree is\n");                                 //debug
-    // LevelOrderTraverse_BT(alphatree_a, print_pcodenode_inBT, 1); //debug
-    *huffmantree = alphatree_a;
-    char cs[255];
-    GetCodefromHuffmanTree(*huffmantree, cs, 0);
-    // printf("huffman tree is\n");                                 //debug
-    // LevelOrderTraverse_BT(alphatree_a, print_pcodenode_inBT, 1); //debug
-    PreOrderTraverse_BT(*alphatree, print_pcodenode_inBT);
-}
+
 void FindCode(BTree alphatree, ElementType e, char **code)
 {
     BTree r;
@@ -574,65 +556,8 @@ void FindCode(BTree alphatree, ElementType e, char **code)
     *code = cn->code;
 }
 
-void coding(BTree alphatree, char *filename, char *outname)
-{
-    FILE *f = fopen(filename, "r");
-    FILE *out = fopen(outname, "w");
 
-    ElementType *e = NULL;
-    char **cp;
-    char c;
-    c = fgetc(f);
 
-    while (c != EOF)
-    {
-        newelem(c, &e);
-        FindCode(alphatree, *e, cp);
-        fprintf(out, "%s", *cp);
-        // printf("%s",*cp);
-        c = fgetc(f);
-    }
-
-    //
-    fclose(f);
-    fclose(out);
-}
-char getchar_inE(ElementType e)
-{
-    codenode *cn;
-    GetValue(e, &cn);
-    return cn->c;
-}
-void decode(BTree huffmantree, char *filename, char *outname)
-{
-    FILE *f = fopen(filename, "r");
-    FILE *out = fopen(outname, "w");
-    //
-    BTree now = huffmantree;
-    char c;
-    c = fgetc(f);
-    while (c != EOF)
-    {
-        if (c == '0')
-        {
-            now = now->left;
-        }
-        else
-        {
-            now = now->right;
-        }
-        if (now->left == now->right && now->left == NULL)
-        {
-            fprintf(out, "%c", getchar_inE(now->e));
-            // printf("%c", getchar_inE(now->e));
-            now = huffmantree;
-        }
-        c = fgetc(f);
-    }
-    //
-    fclose(f);
-    fclose(out);
-}
 void print_HuffmanTree(BTree huffman, char *filename)
 {
     FILE *f = fopen(filename, "w");
@@ -675,7 +600,80 @@ void print_AlphaTree(BTree alphatree, char *filename)
             p = p->right;
         }
     }
-
     //
     fclose(f);
 }
+// void HuffmanGetAlpha
+char getchar_inE(ElementType e)
+{
+    codenode *cn;
+    GetValue(e, &cn);
+    return cn->c;
+}
+void HuffmanDecode(BTree huffmantree, char *filename, char *outname)
+{
+    FILE *f = fopen(filename, "r");
+    FILE *out = fopen(outname, "w");
+    //
+    BTree now = huffmantree;
+    char c;
+    c = fgetc(f);
+    while (c != EOF)
+    {
+        if (c == '0')
+        {
+            now = now->left;
+        }
+        else
+        {
+            now = now->right;
+        }
+        if (now->left == now->right && now->left == NULL)
+        {
+            fprintf(out, "%c", getchar_inE(now->e));
+            // printf("%c", getchar_inE(now->e));
+            now = huffmantree;
+        }
+        c = fgetc(f);
+    }
+    //
+    fclose(f);
+    fclose(out);
+}
+void HuffmanCode(BTree alphatree, char *filename, char *outname)
+{
+    FILE *f = fopen(filename, "r");
+    FILE *out = fopen(outname, "w");
+
+    ElementType *e = NULL;
+    char **cp;
+    char c;
+    c = fgetc(f);
+
+    while (c != EOF)
+    {
+        newelem(c, &e);
+        FindCode(alphatree, *e, cp);
+        fprintf(out, "%s", *cp);
+        // printf("%s",*cp);
+        c = fgetc(f);
+    }
+
+    //
+    fclose(f);
+    fclose(out);
+}
+void HuffmanConstruct(BTree *alphatree, BTree *huffmantree)
+{
+    if ((*alphatree)->t != Tpointer)
+        EXIT(ERROR, "error argument HuffmanConstruct");
+    //alpatree should be contrusted //huffmantree should not be constructed
+    BTree alphatree_a = NULL;
+    Newstruct_BT(alphatree, &alphatree_a, cmp_pcodenode_a);
+    ConverttoHuffmanTree(&alphatree_a);
+    *huffmantree = alphatree_a;
+    char cs[255];
+    GetCodefromHuffmanTree(*huffmantree, cs, 0);
+    PreOrderTraverse_BT(*alphatree, print_pcodenode_inBT);
+}
+

@@ -1,41 +1,47 @@
 CC=gcc -g 
 Iarg= -I ./ADT -I ./ADT/BasicTypes 
 
-ADT_PATH=./ADT
+ADT_PATH=ADT
 ADT_SOURCE:=${wildcard $(ADT_PATH)/*.c}
 ADT_HEAD:=${patsubst %.c,%.h,$(ADT_SOURCE) }
-ADT_OBJ=${patsubst %.c,%.o,$(ADT_SOURCE)}
+ADT_OBJ=${patsubst $(ADT_PATH)/%.c,$(ADT_PATH)/obj/%.o,$(ADT_SOURCE)}
 
-BASICTYPE_PATH=./ADT/BasicTypes
+BASICTYPE_PATH=ADT/BasicTypes
 BASICTYPE_SOURCE:=${wildcard $(BASICTYPE_PATH)/*.c}
 BASICTYPE_HEAD:=${patsubst %.c,%.h,$(BASICTYPE_SOURCE) }
-BASICTYPE_OBJ=${patsubst %.c,%.o,$(BASICTYPE_SOURCE)}
+BASICTYPE_OBJ=${patsubst $(BASICTYPE_PATH)/%.c,$(BASICTYPE_PATH)/obj/%.o,$(BASICTYPE_SOURCE)}
 
 
 
 all:BinaryTreeTest.exe ElementTypeTest.exe StackSTest.exe
 
-BinaryTreeTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ)  BinaryTreeTest.o
+BinaryTreeTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ)  obj/BinaryTreeTest.o
 	$(CC) $(Iarg)  -o $@ $^
 
-StackSTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ) StackSTest.o
+StackSTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ) obj/StackSTest.o
 	$(CC) $(Iarg) -o $@ $^
 
-ElementTypeTest.exe: $(ADT_OBJ) $(BASICTYPE_OBJ) ElementTypeTest.o
+ElementTypeTest.exe: $(ADT_OBJ) $(BASICTYPE_OBJ) obj/ElementTypeTest.o
 	$(CC) $(Iarg) -o $@ $^ 
 
-$(ADT_OBJ):$(ADT_SOURCE) $(ADT_HEAD) $(BASICTYPE_SOURCE)
-	$(CC) $(Iarg) -c $*.c -o $*.o
+$(ADT_OBJ):$(ADT_SOURCE) $(ADT_HEAD) $(BASICTYPE_HEAD) 
+	$(CC) $(Iarg) -c ${patsubst $(ADT_PATH)/obj/%.o,$(ADT_PATH)/%.c,$@} -o $@
+	
+$(BASICTYPE_OBJ):$(BASICTYPE_SOURCE) $(BASICTYPE_HEAD) 
+	$(CC) $(Iarg) -c ${patsubst $(BASICTYPE_PATH)/obj/%.o,$(BASICTYPE_PATH)/%.c,$@} -o $@
 
-$(BASICTYPE_OBJ):$(BASICTYPE_SOURCE) $(BASICTYPE_HEAD)
-	$(CC) $(Iarg) -c $*.c -o $*.o
+ADT_OBJ_PATH:
+	mkdir -p  $(ADT_PATH)/obj
 
-%.o:%.c
-	$(CC) $(Iarg) -c $<
+BASICTYPE_OBJ_PATH:
+	mkdir -p  $(BASICTYPE_PATH)/obj
+
+%.o:${patsubst obj/%.o,%.c,%.c}
+	$(CC) $(Iarg) -c ${patsubst obj/%.o,%.c,$@} -o $@
 
 clean:
 	rm $(ADT_OBJ) $(BASICTYPE_OBJ)
-	rm BinaryTreeTest.o ElementTypeTest.o StackSTest.o
+	rm obj/BinaryTreeTest.o obj/ElementTypeTest.o obj/StackSTest.o
 
 
 # $@: the target filename.
