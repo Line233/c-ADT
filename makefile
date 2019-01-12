@@ -24,11 +24,11 @@ StackSTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ) obj/StackSTest.o
 ElementTypeTest.exe: $(ADT_OBJ) $(BASICTYPE_OBJ) obj/ElementTypeTest.o
 	$(CC) $(Iarg) -o $@ $^ 
 
-$(ADT_OBJ):$(ADT_SOURCE) $(ADT_HEAD) $(BASICTYPE_HEAD) 
+$(ADT_OBJ):$(ADT_PATH)/obj/%.o:$(ADT_PATH)/%.c $(ADT_PATH)/%.h $(BASICTYPE_OBJ)
 	$(CC) $(Iarg) -c ${patsubst $(ADT_PATH)/obj/%.o,$(ADT_PATH)/%.c,$@} -o $@
 	
-$(BASICTYPE_OBJ):$(BASICTYPE_SOURCE) $(BASICTYPE_HEAD) 
-	$(CC) $(Iarg) -c ${patsubst $(BASICTYPE_PATH)/obj/%.o,$(BASICTYPE_PATH)/%.c,$@} -o $@
+$(BASICTYPE_OBJ): $(BASICTYPE_PATH)/obj/%.o:$(BASICTYPE_PATH)/%.c $(BASICTYPE_PATH)/%.h 
+	$(CC) $(Iarg) -c $< -o $@
 
 ADT_OBJ_PATH:
 	mkdir -p  $(ADT_PATH)/obj
@@ -36,8 +36,8 @@ ADT_OBJ_PATH:
 BASICTYPE_OBJ_PATH:
 	mkdir -p  $(BASICTYPE_PATH)/obj
 
-%.o:${patsubst obj/%.o,%.c,%.c}
-	$(CC) $(Iarg) -c ${patsubst obj/%.o,%.c,$@} -o $@
+obj/%.o:%.c
+	$(CC) $(Iarg) -c $< -o $@
 
 clean:
 	rm $(ADT_OBJ) $(BASICTYPE_OBJ)

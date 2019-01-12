@@ -303,7 +303,7 @@ void DeleteMin_BT(BTree *bt, BTree *min)
     (*min)->depth = 0;
 }
 //copy
-void Copy(BTree *copy, BTree bt)
+void Copy_BT(BTree *copy, BTree bt)
 {
     CreateBTree(copy, bt->e);
 }
@@ -375,26 +375,175 @@ void CreateInorderBT(BTree *bt, ElementType **es, int *n, int depth)
 
 //huffmantree
 #include <CII.h>
-int union_pcodenode(ElementType e1, ElementType e2, ElementType *u)
+//normal
+void initiatecodenode_hf(codenode **c, char ch, int a)
+{
+    *c = (codenode *)malloc(sizeof(codenode));
+    if (!(*c))
+        EXIT(ERROR, "no space initiatecodenode_hf");
+    initiate_codenode(*c);
+    (*c)->c = ch;
+    (*c)->a = a;
+}
+int union_pcodenode_hf(ElementType e1, ElementType e2, ElementType *u)
 {
     codenode *a1, *a2;
     GetValue(e1, &a1);
     GetValue(e2, &a2);
     codenode *ux;
-    newcodenode(&ux, '-', a1->a + a2->a);
+    initiatecodenode_hf(&ux, '-', a1->a + a2->a);
     SetValue(*u, &ux);
 }
-int Cmp_ci_a(ElementType e1, ElementType e2)
+int cmp_ci_a_hf(ElementType e1, ElementType e2)
 {
     if (e1.t != Tci || e2.t != Tci)
         EXIT(ERROR, "error type when cii");
     return ((cii *)(e1.content))->a - ((cii *)(e2.content))->a;
 }
-void ConverttoHuffmanTree(BTree *bt)
+int cmp_pcodenode_a_hf(ElementType e1, ElementType e2)
+{
+    if (e1.t != Tpointer || e2.t != Tpointer)
+        EXIT(ERROR, "error type when cmp_pcodenode_a_hf");
+    codenode *a1, *a2;
+    GetValue(e1, &a1);
+    GetValue(e2, &a2);
+    return a1->a - a2->a;
+}
+int cmp_pcodenode_c_hf(ElementType e1, ElementType e2)
+{
+    if (e1.t != Tpointer || e2.t != Tpointer)
+        EXIT(ERROR, "error type when cmp_pcodenode_a_hf");
+    codenode *a1, *a2;
+    GetValue(e1, &a1);
+    GetValue(e2, &a2);
+    return a1->c - a2->c;
+}
+
+// code and decode
+char getcharfromcode_hf(ElementType e)//used in decode
+{
+    codenode *cn;
+    GetValue(e, &cn);
+    return cn->c;
+}
+void getelemnfromchar_hf(char c, ElementType **e)//used in HuffmanCode
+{
+    if ((*e) == NULL)
+    {
+        (*e) = (ElementType *)malloc(sizeof(ElementType));
+        if (!*e)
+            EXIT(ERROR, "error getelemnfromchar_hf");
+        InitiateElement(*e, Tpointer);
+        codenode *cn;
+        initiatecodenode_hf(&cn, c, 1);
+        SetValue(**e, &cn);
+    }
+    else
+    {
+        codenode *cn;
+        GetValue(**e, &cn);
+        cn->c = c;
+    }
+}
+void getcodefromchar_hf(BTree alphatree, ElementType e, char **code)//used in code HuffmanCode
+{
+    BTree r;
+    Find_BT(alphatree, e, &r, cmp_pcodenode_c_hf);
+    codenode *cn;
+    GetValue(r->e, &cn);
+    *code = cn->code;
+}
+void HuffmanDecode(BTree huffmantree, char *filename, char *outname)
+{
+    FILE *f = fopen(filename, "r");
+    FILE *out = fopen(outname, "w");
+    //
+    BTree now = huffmantree;
+    char c;
+    c = fgetc(f);
+    while (c != EOF)
+    {
+        if (c == '0')
+        {
+            now = now->left;
+        }
+        else
+        {
+            now = now->right;
+        }
+        if (now->left == now->right && now->left == NULL)
+        {
+            fprintf(out, "%c", getcharfromcode_hf(now->e));
+            now = huffmantree;
+        }
+        c = fgetc(f);
+    }
+    //
+    fclose(f);
+    fclose(out);
+}
+void HuffmanCode(BTree alphatree, char *filename, char *outname)
+{
+    FILE *f = fopen(filename, "r");
+    FILE *out = fopen(outname, "w");
+
+    ElementType *e = NULL;
+    char **cp;
+    char c;
+    c = fgetc(f);
+
+    while (c != EOF)
+    {
+        getelemnfromchar_hf(c, &e);
+        getcodefromchar_hf(alphatree, *e, cp);
+        fprintf(out, "%s", *cp);
+        // printf("%s",*cp);
+        c = fgetc(f);
+    }
+
+    //
+    fclose(f);
+    fclose(out);
+}
+
+//create data struct
+
+void copycode_hf(ElementType e, char *c, int pos)//used in constructcode
+{
+    codenode *cn;
+    GetValue(e, &cn);
+    cn->code = (char *)malloc(sizeof(char) * (pos + 1));
+    if (!cn->code)
+        EXIT(ERROR, "no space when constructcode");
+    for (int i = 0; i < pos; i++)
+    {
+        *(cn->code + i) = *(c + i);
+    }
+    *(cn->code + pos) = '\0';
+}
+void constructcode(BTree huffmantree, char *c, int pos)//used in createhuffmantree
+{
+    if (huffmantree->left)
+    {
+        *(c + pos) = '0';
+        constructcode(huffmantree->left, c, pos + 1);
+    }
+    if (huffmantree->right)
+    {
+        *(c + pos) = '1';
+        constructcode(huffmantree->right, c, pos + 1);
+    }
+    if (huffmantree->left == NULL && huffmantree->right == NULL)
+    {
+        //leaf
+        copycode_hf(huffmantree->e, c, pos);
+    }
+}
+void converttohuffmantree_hf(BTree *bt)
 {
     if ((*bt)->t != Tpointer)
     {
-        EXIT(ERROR, "elementtype should be tpointer when ConverttoHuffmanTree");
+        EXIT(ERROR, "elementtype should be tpointer when converttohuffmantree_hf");
     }
     StackS stack;
     InitiateStackS(&stack, Tpointer);
@@ -409,9 +558,9 @@ void ConverttoHuffmanTree(BTree *bt)
         BTree new;
         InitiateBTree(&new, Tpointer);
         //now codenodt
-        union_pcodenode(min->e, min2->e, &pointer);
+        union_pcodenode_hf(min->e, min2->e, &pointer);
         CopyElement(new->e, pointer);
-        OrderInsert_BT(bt, new, cmp_pcodenode_a);
+        OrderInsert_BT(bt, new, cmp_pcodenode_a_hf);
 
         min->parent = min2->parent = new;
         //store min min2
@@ -424,7 +573,7 @@ void ConverttoHuffmanTree(BTree *bt)
         DeleteMin_BT(bt, &min);
         DeleteMin_BT(bt, &min2);
     }
-    OrderInsert_BT(bt, min, Cmp_ci_a);
+    OrderInsert_BT(bt, min, cmp_ci_a_hf);
     bool x = true; //right
     while (!IsEmptySS(stack))
     {
@@ -443,129 +592,62 @@ void ConverttoHuffmanTree(BTree *bt)
     }
     PreOrderTraverse_BT(*bt, UpdateDepth_BT);
 }
-int cmp_pcodenode_a(ElementType e1, ElementType e2)
+void CreateAlpabetTree(char* filename,BTree* alphabettree)
 {
-    if (e1.t != Tpointer || e2.t != Tpointer)
-        EXIT(ERROR, "error type when cmp_pcodenode_a");
-    codenode *a1, *a2;
-    GetValue(e1, &a1);
-    GetValue(e2, &a2);
-    return a1->a - a2->a;
+    FILE *f = fopen(filename, "r");
+    if(!f) EXIT(ERROR,"open file error when CreateAlpabetTree");
+    //
+    char c;
+    ElementType e;
+    InitiateElement(&e, Tpointer);//pointer to codenode
+    *alphabettree = NULL;
+    c = fgetc(f);
+    while (c != EOF)
+    {
+        // printf("%c",c);//debug
+        codenode* cn;
+        initiatecodenode_hf(&cn,c,1);
+        SetValue(e, &cn);
+        BTree find = NULL;
+        Find_BT(*alphabettree, e, &find,cmp_pcodenode_c_hf);
+        if (find == NULL)
+        {
+            OrderInsertElement_BT(alphabettree, e, cmp_pcodenode_c_hf);
+        }
+        else
+        {
+            codenode* cn2;
+            GetValue(find->e,&cn2);
+            cn2->a++;
+        }
+        c = fgetc(f);
+    }
+    //
+    fclose(f);
 }
-int cmp_pcodenode_c(ElementType e1, ElementType e2)
+void CreateHuffmanTree(BTree *alphatree, BTree *huffmantree)
 {
-    if (e1.t != Tpointer || e2.t != Tpointer)
-        EXIT(ERROR, "error type when cmp_pcodenode_a");
-    codenode *a1, *a2;
-    GetValue(e1, &a1);
-    GetValue(e2, &a2);
-    return a1->c - a2->c;
-}
-int add_pcodenode_a(ElementType e1, ElementType e2)
-{
-    if (e1.t != Tpointer || e2.t != Tpointer)
-        EXIT(ERROR, "error type when cmp_pcodenode_a");
-    codenode *a1, *a2;
-    GetValue(e1, &a1);
-    GetValue(e2, &a2);
-    return a1->a + a2->a;
+    if ((*alphatree)->t != Tpointer)
+        EXIT(ERROR, "error argument CreateHuffmanTree");
+    //alpatree should be contrusted //huffmantree should not be constructed
+    BTree alphatree_a = NULL;
+    Newstruct_BT(alphatree, &alphatree_a, cmp_pcodenode_a_hf);
+    converttohuffmantree_hf(&alphatree_a);
+    *huffmantree = alphatree_a;
+    char cs[255];
+    constructcode(*huffmantree, cs, 0);
+    // PreOrderTraverse_BT(*alphatree, print_pcodenode_inBT);
 }
 
-void newcodenode(codenode **c, char ch, int a)
-{
-    *c = (codenode *)malloc(sizeof(codenode));
-    if (!(*c))
-        EXIT(ERROR, "no space newcodenode");
-    initiate_codenode(*c);
-    (*c)->c = ch;
-    (*c)->a = a;
-}
-
-void print_pcodenode(ElementType e)
-{
-    codenode *c;
-    GetValue(e, &c);
-    print_codenode(c);
-    printf("\n");
-}
-void print_pcodenode_inBT(BTree bt)
-{
-    for (int i = 0; i < bt->depth; i++)
-    {
-        printf(".");
-    }
-    print_pcodenode(bt->e);
-}
-void fullcode(ElementType e, char *c, int pos)
-{
-    codenode *cn;
-    GetValue(e, &cn);
-    cn->code = (char *)malloc(sizeof(char) * (pos + 1));
-    if (!cn->code)
-        EXIT(ERROR, "no space when GetCodefromHuffmanTree");
-    for (int i = 0; i < pos; i++)
-    {
-        *(cn->code + i) = *(c + i);
-    }
-    *(cn->code + pos) = '\0';
-}
-void newelem(char c, ElementType **e)
-{
-    if ((*e) == NULL)
-    {
-        (*e) = (ElementType *)malloc(sizeof(ElementType));
-        if (!*e)
-            EXIT(ERROR, "error newelem");
-        InitiateElement(*e, Tpointer);
-        codenode *cn;
-        newcodenode(&cn, c, 1);
-        SetValue(**e, &cn);
-    }
-    else
-    {
-        codenode *cn;
-        GetValue(**e, &cn);
-        cn->c = c;
-    }
-}
-void GetCodefromHuffmanTree(BTree huffmantree, char *c, int pos)
-{
-    if (huffmantree->left)
-    {
-        *(c + pos) = '0';
-        GetCodefromHuffmanTree(huffmantree->left, c, pos + 1);
-    }
-    if (huffmantree->right)
-    {
-        *(c + pos) = '1';
-        GetCodefromHuffmanTree(huffmantree->right, c, pos + 1);
-    }
-    if (huffmantree->left == NULL && huffmantree->right == NULL)
-    {
-        //leaf
-        fullcode(huffmantree->e, c, pos);
-    }
-}
-
-void FindCode(BTree alphatree, ElementType e, char **code)
-{
-    BTree r;
-    Find_BT(alphatree, e, &r, cmp_pcodenode_c);
-    codenode *cn;
-    GetValue(r->e, &cn);
-    *code = cn->code;
-}
-
-
-
-void print_HuffmanTree(BTree huffman, char *filename)
+//save to file
+void SaveHuffmanTreetoFile(BTree huffman, char *filename)
 {
     FILE *f = fopen(filename, "w");
 
     //
     fclose(f);
 }
-void print_AlphaTree(BTree alphatree, char *filename)
+void SaveAlphaTreetoFile(BTree alphatree, char *filename)
 {
     FILE *f = fopen(filename, "w");
     
@@ -603,77 +685,3 @@ void print_AlphaTree(BTree alphatree, char *filename)
     //
     fclose(f);
 }
-// void HuffmanGetAlpha
-char getchar_inE(ElementType e)
-{
-    codenode *cn;
-    GetValue(e, &cn);
-    return cn->c;
-}
-void HuffmanDecode(BTree huffmantree, char *filename, char *outname)
-{
-    FILE *f = fopen(filename, "r");
-    FILE *out = fopen(outname, "w");
-    //
-    BTree now = huffmantree;
-    char c;
-    c = fgetc(f);
-    while (c != EOF)
-    {
-        if (c == '0')
-        {
-            now = now->left;
-        }
-        else
-        {
-            now = now->right;
-        }
-        if (now->left == now->right && now->left == NULL)
-        {
-            fprintf(out, "%c", getchar_inE(now->e));
-            // printf("%c", getchar_inE(now->e));
-            now = huffmantree;
-        }
-        c = fgetc(f);
-    }
-    //
-    fclose(f);
-    fclose(out);
-}
-void HuffmanCode(BTree alphatree, char *filename, char *outname)
-{
-    FILE *f = fopen(filename, "r");
-    FILE *out = fopen(outname, "w");
-
-    ElementType *e = NULL;
-    char **cp;
-    char c;
-    c = fgetc(f);
-
-    while (c != EOF)
-    {
-        newelem(c, &e);
-        FindCode(alphatree, *e, cp);
-        fprintf(out, "%s", *cp);
-        // printf("%s",*cp);
-        c = fgetc(f);
-    }
-
-    //
-    fclose(f);
-    fclose(out);
-}
-void HuffmanConstruct(BTree *alphatree, BTree *huffmantree)
-{
-    if ((*alphatree)->t != Tpointer)
-        EXIT(ERROR, "error argument HuffmanConstruct");
-    //alpatree should be contrusted //huffmantree should not be constructed
-    BTree alphatree_a = NULL;
-    Newstruct_BT(alphatree, &alphatree_a, cmp_pcodenode_a);
-    ConverttoHuffmanTree(&alphatree_a);
-    *huffmantree = alphatree_a;
-    char cs[255];
-    GetCodefromHuffmanTree(*huffmantree, cs, 0);
-    PreOrderTraverse_BT(*alphatree, print_pcodenode_inBT);
-}
-

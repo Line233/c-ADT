@@ -17,8 +17,8 @@ int cmp_triple(void *a, void *b)
 void copy_triple(void *copy, void *a)
 {
     Triple *t1 = (Triple *)a;
-    Triple *t2 = (Triple *)copy;
-    t2->a = t1->a;
+    Triple *t2 = (Triple *)copy;  
+    t2->a = t1->a;  
     t2->b = t1->b;
     t2->c = t1->c;
 }

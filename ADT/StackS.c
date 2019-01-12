@@ -24,7 +24,7 @@ Status PrintStackS(char info[], StackS stack)
     ElementType *p = stack.top;
     while (p - stack.base > 0)
     {
-        printf("\t"); //modified
+        printf("\t"); //modified  
         PrintElement(*(p - 1));
         printf("\n"); //modified
         p--;
