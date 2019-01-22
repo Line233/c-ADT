@@ -6,10 +6,17 @@
 void InitiateElement(ElementType *e, type t)
 {
     e->t = t;
-    e->content = (void *)malloc(Esize[t]);
-    if (!e->content)
-        EXIT(ERROR, "no space when initiate element");
-    (*initiate_e[t])(e->content);
+    if (t == Tnone)
+    {
+        e->content = NULL;
+    }
+    else
+    {
+        e->content = (void *)malloc(Esize[t]);
+        if (!e->content)
+            EXIT(ERROR, "no space when initiate element");
+        (*initiate_e[t])(e->content);
+    }
 }
 void DestroyElement(ElementType *e)
 {
@@ -21,27 +28,42 @@ void DestroyElement(ElementType *e)
 }
 void PrintElement(ElementType e)
 {
-    (*print_e[e.t])(e.content);
+    if (e.t != Tnone)
+    {
+        (*print_e[e.t])(e.content);
+    }
 }
 int CmpElement(ElementType a, ElementType b)
 {
-    if (a.t != b.t)
-        EXIT(ERROR, "differrent type can't compare");
-    return (*cmp_e[a.t])(a.content, b.content);
+    if (a.t != Tnone)
+    {
+        if (a.t != b.t)
+            EXIT(ERROR, "differrent type can't compare");
+        return (*cmp_e[a.t])(a.content, b.content);
+    }
 }
 void CopyElement(ElementType copy, ElementType a)
 {
-    if (copy.t != a.t)
-        EXIT(ERROR, "differrent type can't copy");
-    (*copy_e[copy.t])(copy.content, a.content);
+    if (copy.t != Tnone)
+    {
+        if (copy.t != a.t)
+            EXIT(ERROR, "differrent type can't copy");
+        (*copy_e[copy.t])(copy.content, a.content);
+    }
 }
 void SetValue(ElementType e, void *value)
 {
-    (*copy_e[e.t])(e.content, value);
+    if (e.t != Tnone)
+    {
+        (*copy_e[e.t])(e.content, value);
+    }
 }
 void GetValue(ElementType e, void *value)
 {
-    (*copy_e[e.t])(value, e.content);
+    if (e.t != Tnone)
+    {
+        (*copy_e[e.t])(value, e.content);
+    }
 }
 
 void CopyElementReferrence(ElementType *copy, ElementType a)

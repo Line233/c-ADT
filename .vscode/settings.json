@@ -4,6 +4,5 @@
         "malloc.h": "c",
         "stdarg.h": "c",
         "ci.h": "c"
-    },
-    "C_Cpp.errorSquiggles": "Disabled"
+    }
 }
