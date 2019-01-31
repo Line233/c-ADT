@@ -14,6 +14,7 @@ void InitiateBTree(BTree *bt, type t)
     (*bt)->depth = 0;
     (*bt)->left = (*bt)->right = (*bt)->parent = NULL;
     (*bt)->t = t;
+    (*bt)->bf = 0;
 }
 void CreateBTree(BTree *bt, ElementType e)
 {
@@ -52,7 +53,155 @@ void OrderInsertElement_BT(BTree *bt, ElementType e, int (*cmp)(ElementType, Ele
     CopyElement((btc->e), e);
     OrderInsert_BT(bt, btc, (*cmp));
 }
+//AVL insert
 
+void rotate_avl(BTree *bt, int lr)
+{
+    if (lr == 0)
+    {
+        (*bt)->bf -= (*bt)->right->bf > 0 ? (*bt)->right->bf : 0;
+        (*bt)->bf--;
+        if((*bt)->bf>=0) (*bt)->right->bf--;
+        else (*bt)->right->bf-=(*bt)->bf;
+
+        BTree p = (*bt)->right;
+
+        p->parent = (*bt)->parent;
+        (*bt)->parent = p;
+        if(p->left)p->left->parent = (*bt);;
+
+        (*bt)->right = p->left;
+        p->left = *bt;
+        (*bt) = p;
+    }
+    else //lr==1
+    {
+        (*bt)->bf -= (*bt)->left->bf < 0 ? (*bt)->left->bf : 0;
+        (*bt)->bf++;
+        (*bt)->left->bf += (*bt)->bf > 0 ? (*bt)->bf : 0;
+        (*bt)->left->bf++;
+
+        BTree p = (*bt)->left;
+
+        p->parent = (*bt)->parent;
+        (*bt)->parent = p;
+        if(p->right)p->right->parent = (*bt);
+
+        (*bt)->left = p->right;
+        p->right = *bt;
+        (*bt) = p;
+    }
+    PreOrderTraverse_BT(*bt, UpdateDepth_BT);
+}
+
+void update_avl(BTree bt, int lr)
+{
+    if (lr == 0)
+    {
+        bt->left->parent = bt;
+        bt->left->depth = bt->depth + 1;
+    }
+    else
+    {
+        bt->right->parent = bt;
+        bt->right->depth = bt->depth + 1;
+    }
+}
+void dobalance_avl(BTree *bt)
+{
+    enum BF bfroot = (*bt)->bf;
+    enum BF bfl = (*bt)->left ? (*bt)->left->bf : 0;
+    enum BF bfr = (*bt)->right ? (*bt)->right->bf : 0;
+    if (bfroot < 0)
+    {
+        if (bfl < 0)
+            rotate_avl(bt, 1);
+        else //bfl=rh
+        {
+            rotate_avl(&((*bt)->left), 0);
+            rotate_avl(bt, 1);
+        }
+    }
+    else
+    { //bfroot==rh
+        if (bfr > 0)
+            rotate_avl(bt, 0);
+        else
+        {
+            rotate_avl(&((*bt)->right), 1);
+            rotate_avl(bt, 0);
+        }
+    }
+}
+void balance_avl(BTree *bt, int lr, bool *bfchanged)
+{
+    enum BF bfx = (*bt)->bf;
+    if (bfx == EH)
+    {
+        (*bt)->bf = lr == 0 ? LH : RH;
+        *bfchanged = true;
+    }
+    else
+    {
+        if ((bfx == RH && lr == 0) || (bfx == LH) && lr == 1)
+        {
+            (*bt)->bf = EH;
+        }
+        else
+        {
+            (*bt)->bf += (*bt)->bf < 0 ? -1 : 1;
+            dobalance_avl(bt);
+        }
+        *bfchanged = false;
+    }
+}
+void Insert_avl_BT(BTree *bt, BTree node, int (*cmp)(ElementType, ElementType), bool *bfchanged, bool *inserted)
+{
+    if (!(*bt))
+    {
+        (*bt) = node;
+        *bfchanged = true;
+        *inserted = true;
+        return;
+    }
+    int r = (*cmp)((*bt)->e, node->e);
+    if (r == 0)
+    {
+        *bfchanged = false;
+        *inserted = false;
+        return;
+    }
+    else
+    {
+        if (r < 0)
+        {
+            Insert_avl_BT(&((*bt)->right), node, (*cmp), bfchanged, inserted);
+        }
+        else
+        {
+            Insert_avl_BT(&((*bt)->left), node, (*cmp), bfchanged, inserted);
+        }
+        int lr = r < 0 ? 1 : 0;
+        if (*inserted)
+        {
+            update_avl(*bt, lr);
+            *inserted = false;
+        }
+        if (*bfchanged)
+        {
+            balance_avl(bt, lr, bfchanged);
+        }
+    }
+}
+void InsertElement_avl_BT(BTree *bt, ElementType e, int (*cmp)(ElementType, ElementType))
+{
+    BTree btc;
+    InitiateBTree(&btc, e.t);
+    CopyElement((btc->e), e);
+    bool b = false;
+    bool c = false;
+    Insert_avl_BT(bt, btc, (*cmp), &b, &c);
+}
 //traverse
 void LevelOrderTraverse_BT(BTree bt, void (*visit)(BTree), int orient)
 {
@@ -420,13 +569,13 @@ int cmp_pcodenode_c_hf(ElementType e1, ElementType e2)
 }
 
 // code and decode
-char getcharfromcode_hf(ElementType e)//used in decode
+char getcharfromcode_hf(ElementType e) //used in decode
 {
     codenode *cn;
     GetValue(e, &cn);
     return cn->c;
 }
-void getelemnfromchar_hf(char c, ElementType **e)//used in HuffmanCode
+void getelemnfromchar_hf(char c, ElementType **e) //used in HuffmanCode
 {
     if ((*e) == NULL)
     {
@@ -445,7 +594,7 @@ void getelemnfromchar_hf(char c, ElementType **e)//used in HuffmanCode
         cn->c = c;
     }
 }
-void getcodefromchar_hf(BTree alphatree, ElementType e, char **code)//used in code HuffmanCode
+void getcodefromchar_hf(BTree alphatree, ElementType e, char **code) //used in code HuffmanCode
 {
     BTree r;
     Find_BT(alphatree, e, &r, cmp_pcodenode_c_hf);
@@ -508,7 +657,7 @@ void HuffmanCode(BTree alphatree, char *filename, char *outname)
 
 //create data struct
 
-void copycode_hf(ElementType e, char *c, int pos)//used in constructcode
+void copycode_hf(ElementType e, char *c, int pos) //used in constructcode
 {
     codenode *cn;
     GetValue(e, &cn);
@@ -521,7 +670,7 @@ void copycode_hf(ElementType e, char *c, int pos)//used in constructcode
     }
     *(cn->code + pos) = '\0';
 }
-void constructcode(BTree huffmantree, char *c, int pos)//used in createhuffmantree
+void constructcode(BTree huffmantree, char *c, int pos) //used in createhuffmantree
 {
     if (huffmantree->left)
     {
@@ -592,32 +741,33 @@ void converttohuffmantree_hf(BTree *bt)
     }
     PreOrderTraverse_BT(*bt, UpdateDepth_BT);
 }
-void CreateAlpabetTree(char* filename,BTree* alphabettree)
+void CreateAlpabetTree(char *filename, BTree *alphabettree)
 {
     FILE *f = fopen(filename, "r");
-    if(!f) EXIT(ERROR,"open file error when CreateAlpabetTree");
+    if (!f)
+        EXIT(ERROR, "open file error when CreateAlpabetTree");
     //
     char c;
     ElementType e;
-    InitiateElement(&e, Tpointer);//pointer to codenode
+    InitiateElement(&e, Tpointer); //pointer to codenode
     *alphabettree = NULL;
     c = fgetc(f);
     while (c != EOF)
     {
         // printf("%c",c);//debug
-        codenode* cn;
-        initiatecodenode_hf(&cn,c,1);
+        codenode *cn;
+        initiatecodenode_hf(&cn, c, 1);
         SetValue(e, &cn);
         BTree find = NULL;
-        Find_BT(*alphabettree, e, &find,cmp_pcodenode_c_hf);
+        Find_BT(*alphabettree, e, &find, cmp_pcodenode_c_hf);
         if (find == NULL)
         {
             OrderInsertElement_BT(alphabettree, e, cmp_pcodenode_c_hf);
         }
         else
         {
-            codenode* cn2;
-            GetValue(find->e,&cn2);
+            codenode *cn2;
+            GetValue(find->e, &cn2);
             cn2->a++;
         }
         c = fgetc(f);
@@ -650,9 +800,9 @@ void SaveHuffmanTreetoFile(BTree huffman, char *filename)
 void SaveAlphaTreetoFile(BTree alphatree, char *filename)
 {
     FILE *f = fopen(filename, "w");
-    
+
     //inorder traverse
-    BTree bt=alphatree;
+    BTree bt = alphatree;
     //variables
     StackS stack;
     InitiateStackS(&stack, Tpointer);
@@ -675,9 +825,9 @@ void SaveAlphaTreetoFile(BTree alphatree, char *filename)
             GetValue(e, &p);
             // (*visit)(p);
             //visit
-            codenode* cn;
-            GetValue(p->e,&cn);
-            fprintf(f,"%d %d %s\n",cn->c,cn->a,cn->code);
+            codenode *cn;
+            GetValue(p->e, &cn);
+            fprintf(f, "%d %d %s\n", cn->c, cn->a, cn->code);
             //
             p = p->right;
         }

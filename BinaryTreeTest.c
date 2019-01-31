@@ -1,6 +1,6 @@
 #include "BinaryTree.h"
 #include <stdio.h>
-#include"BinaryTree.h"
+#include "BinaryTree.h"
 #include "ElementType.h"
 #include "Char.h"
 
@@ -11,12 +11,12 @@ void visit_bt(BTree bt)
         printf(". ");
     }
     PrintElement(bt->e);
-    printf("\n");
+    printf("  bf:%d\n", bt->bf);
 }
 void BinaryTreeTest()
 {
     //public
-    TEST("BINARYTREE", 0);  
+    TEST("BINARYTREE", 0);
     FILE *f = fopen("TestData/BTTEST.txt", "r");
     if (!f)
         EXIT(ERROR, "open file failed");
@@ -73,7 +73,7 @@ void BinaryTreeTest()
         }
         else
         {
-            break;  
+            break;
         }
     }
     for (int i = 0; i < n; i++)
@@ -84,6 +84,20 @@ void BinaryTreeTest()
     ElementType *charss = chars;
     CreateInorderBT(&btforc, &charss, &n, 0);
     PreOrderTraverse_BT(btforc, visit_bt);
+
+    //test avl
+    TEST("avl test", 1);
+    BTree avl = NULL;
+    fscanf(f, "%d", &n);
+    for (int i = 0; i < n; i++)
+    {
+        fscanf(f, "%d", &x);
+        SetValue(e, &x);
+        InsertElement_avl_BT(&avl, e, CmpElement);
+        avl->parent = NULL;
+        avl->depth = 0;
+    }
+    PreOrderTraverse_BT(avl, visit_bt);
 
     //public
     fclose(f);
@@ -107,25 +121,26 @@ void print_pcodenode_inBT(BTree bt)
 }
 void HuffmanTreeTest()
 {
-    BTree bt=NULL;
-    CreateAlpabetTree("./TestData/HuffmanTreeTest.txt",&bt);
+    BTree bt = NULL;
+    CreateAlpabetTree("./TestData/HuffmanTreeTest.txt", &bt);
     PreOrderTraverse_BT(bt, print_pcodenode_inBT);
-    BTree huffmantree=NULL;
+    BTree huffmantree = NULL;
     CreateHuffmanTree(&bt, &huffmantree);
     //
     printf("close successfully\n\n\n");
 
-    HuffmanCode(bt,"./TestData/HuffmanTreeTest.txt","./TestData/huffmanout.txt");
+    HuffmanCode(bt, "./TestData/HuffmanTreeTest.txt", "./TestData/huffmanout.txt");
     printf("HuffmanCode over\n\n");
-    HuffmanDecode(huffmantree,"./TestData/huffmanout.txt","./TestData/huffmantreeHuffmanDecode.txt");
+    HuffmanDecode(huffmantree, "./TestData/huffmanout.txt", "./TestData/huffmantreeHuffmanDecode.txt");
     printf("HuffmanDecode over\n\n");
 
-    SaveAlphaTreetoFile(bt,"./TestData/AlphaTree_Huffman.txt");
+    SaveAlphaTreetoFile(bt, "./TestData/AlphaTree_Huffman.txt");
     printf("print alphatree over\n");
     getchar();
 }
 int main()
 {
-    HuffmanTreeTest();
     BinaryTreeTest();
+
+    HuffmanTreeTest();
 }
