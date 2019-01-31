@@ -91,7 +91,6 @@ void rotate_avl(BTree *bt, int lr)
         p->right = *bt;
         (*bt) = p;
     }
-    PreOrderTraverse_BT(*bt, UpdateDepth_BT);
 }
 
 void update_avl(BTree bt, int lr)
@@ -132,6 +131,7 @@ void dobalance_avl(BTree *bt)
             rotate_avl(bt, 0);
         }
     }
+    PreOrderTraverse_BT(*bt, UpdateDepth_BT);
 }
 void balance_avl(BTree *bt, int lr, bool *bfchanged)
 {
