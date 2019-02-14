@@ -13,11 +13,12 @@ BASICTYPE_OBJ=${patsubst $(BASICTYPE_PATH)/%.c,$(BASICTYPE_PATH)/obj/%.o,$(BASIC
 
 
 
-all:BinaryTreeTest.exe ElementTypeTest.exe StackSTest.exe GraphTest.exe
+all:BinaryTreeTest.exe ElementTypeTest.exe StackSTest.exe GraphTest.exe Addline.exe
 
 BinaryTreeTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ)  obj/BinaryTreeTest.o
 	$(CC) $(Iarg)  -o $@ $^
-
+Addline.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ)  obj/Addline.o
+	$(CC) $(Iarg)  -o $@ $^
 StackSTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ) obj/StackSTest.o
 	$(CC) $(Iarg) -o $@ $^
 
