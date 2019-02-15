@@ -11,9 +11,12 @@ BASICTYPE_SOURCE:=${wildcard $(BASICTYPE_PATH)/*.c}
 BASICTYPE_HEAD:=${patsubst %.c,%.h,$(BASICTYPE_SOURCE) }
 BASICTYPE_OBJ=${patsubst $(BASICTYPE_PATH)/%.c,$(BASICTYPE_PATH)/obj/%.o,$(BASICTYPE_SOURCE)}
 
+EXE_OBJ=${wildcard ./obj/*.o}
 
+all: SortTest.exe
 
-all:BinaryTreeTest.exe ElementTypeTest.exe StackSTest.exe GraphTest.exe Addline.exe
+alls:BinaryTreeTest.exe ElementTypeTest.exe StackSTest.exe GraphTest.exe Addline.exe SortTest.exe
+
 
 BinaryTreeTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ)  obj/BinaryTreeTest.o
 	$(CC) $(Iarg)  -o $@ $^
@@ -27,6 +30,11 @@ ElementTypeTest.exe: $(ADT_OBJ) $(BASICTYPE_OBJ) obj/ElementTypeTest.o
 
 GraphTest.exe:$(ADT_OBJ) $(BASICTYPE_OBJ) obj/GraphTest.o
 	$(CC) $(Iarg) -o $@ $^ 
+
+
+SortTest.exe:$(ADT_OBJ) $(BASICTYPE_OBJ) obj/SortTest.o
+	$(CC) $(Iarg) -o $@ $^ 
+
 
 
 $(ADT_OBJ):$(ADT_PATH)/obj/%.o:$(ADT_PATH)/%.c $(ADT_PATH)/%.h $(BASICTYPE_OBJ)
@@ -45,8 +53,7 @@ obj/%.o:%.c
 	$(CC) $(Iarg) -c $< -o $@
 
 clean:
-	rm $(ADT_OBJ) $(BASICTYPE_OBJ)
-	rm obj/BinaryTreeTest.o obj/ElementTypeTest.o obj/StackSTest.o
+	rm $(ADT_OBJ) $(BASICTYPE_OBJ) $(EXE_OBJ)
 
 
 # $@: the target filename.
