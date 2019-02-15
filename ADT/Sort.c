@@ -145,6 +145,17 @@ int seletpivot(ElementType es[], int n)
             return CmpElement(es[0], es[n - 1]) > 0 ? 0 : n - 1;
     }
 }
+void partition_bubble(ElementType es[], int big, int small, bool *inorder, bool *isfirst)
+{
+    if (!*isfirst && CmpElement(es[small], es[big]) > 0)
+    {
+        exchangeelem(es, small, big);
+        if (*inorder)
+            *inorder = false;
+    }
+    if (*isfirst)
+        *isfirst = false;
+}
 int partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder)
 {
     int p = pivot;
@@ -159,14 +170,7 @@ int partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder
         isfirst = true;
         while (high > p && CmpElement(es[high], e) >= 0)
         {
-            if (!isfirst && CmpElement(es[high], es[high + 1]) > 0)
-            {
-                exchangeelem(es, high, high + 1);
-                if (*linorder)
-                    *linorder = false;
-            }
-            if (isfirst)
-                isfirst = false;
+            partition_bubble(es, high + 1, high, linorder, &isfirst);
             high--;
         }
         if (high != p)
@@ -177,14 +181,7 @@ int partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder
         isfirst = true;
         while (low < p && CmpElement(es[low], e) <= 0)
         {
-            if (!isfirst && CmpElement(es[low], es[low - 1]) < 0)
-            {
-                exchangeelem(es, low, low - 1);
-                if (*rinorder)
-                    *rinorder = false;
-            }
-            if (isfirst)
-                isfirst = false;
+            partition_bubble(es, low, low - 1, rinorder, &isfirst);
             low++;
         }
         if (low != p)
