@@ -11,20 +11,20 @@ void printes2(ElementType es[], int n)
         printf("\n");
     }
 }
-int rightposition_straight(ElementType es[], int n, ElementType e, int d)
+int rightposition_straight(ElementType es[], int n, ElementType e, int d,int(*cmp)(ElementType,ElementType))
 {
     if (n < 1)
         return 0;
     int i = n - d;
     for (; i >= 0; i -= d)
     {
-        if (CmpElement(es[i], e) <= 0)
+        if ((*cmp)(es[i], e) <= 0)
             return i + d;
     }
     return i + d;
 }
 
-int rightposition_binary(ElementType es[], int n, ElementType e)
+int rightposition_binary(ElementType es[], int n, ElementType e,int(*cmp)(ElementType,ElementType))
 {
     if (n < 1)
         return 0;
@@ -32,7 +32,7 @@ int rightposition_binary(ElementType es[], int n, ElementType e)
     while (a < b)
     {
         m = (a + b) / 2;
-        if (CmpElement(es[m], e) > 0)
+        if ((*cmp)(es[m], e) > 0)
         {
             b = m - 1;
         }
@@ -41,7 +41,7 @@ int rightposition_binary(ElementType es[], int n, ElementType e)
             a = m + 1;
         }
     }
-    if (CmpElement(es[a], e) < 0)
+    if ((*cmp)(es[a], e) < 0)
     {
         return a + 1;
     }
@@ -72,37 +72,37 @@ void move(ElementType es[], int n, int from, int to, int d)
         es[to].content = x;
     }
 }
-void InsertSort(ElementType es[], int n)
+void InsertSort(ElementType es[], int n,int(*cmp)(ElementType,ElementType))
 {
     for (int i = 1; i < n; i++)
     {
         int k;
-        // k = rightposition_straight(es, i, es[i], 1);
-        k = rightposition_binary(es, i, es[i]);
+        // k = rightposition_straight(es, i, es[i], 1,cmp);
+        k = rightposition_binary(es, i, es[i],cmp);
         move(es, n, i, k, 1);
         // printf("\n%d:\n",i);
         // printes2(es,n);
     }
 }
 
-void shellsort_helper(ElementType es[], int n, int d)
+void shellsort_helper(ElementType es[], int n, int d,int(*cmp)(ElementType,ElementType))
 {
     for (int i = d; i < n; i++)
     {
         // int k = rightposition_straight(es, i, es[i]);
-        int k = rightposition_straight(es, i, es[i], d);
+        int k = rightposition_straight(es, i, es[i], d,cmp);
         move(es, n, i, k, d);
         // printf("\n%d:\n",i);
         // printes2(es,n);
     }
 }
-void ShellSort(ElementType es[], int n)
+void ShellSort(ElementType es[], int n,int(*cmp)(ElementType,ElementType))
 {
     int k = (int)log2(n + 1);
     for (int i = 1; i <= k; i++)
     {
         int d = (int)pow(2, k - i);
-        shellsort_helper(es, n, d);
+        shellsort_helper(es, n, d,cmp);
     }
 }
 void exchangeelem(ElementType es[], int i, int j)
@@ -113,7 +113,7 @@ void exchangeelem(ElementType es[], int i, int j)
     es[i].content = es[j].content;
     es[j].content = x;
 }
-void BubbleSort(ElementType es[], int n)
+void BubbleSort(ElementType es[], int n,int(*cmp)(ElementType,ElementType))
 {
     bool inorder;
     for (int i = n - 1; i > 0; i--)
@@ -121,7 +121,7 @@ void BubbleSort(ElementType es[], int n)
         inorder = TRUE;
         for (int j = 0; j < i; j++)
         {
-            if (CmpElement(es[j], es[j + 1]) > 0)
+            if ((*cmp)(es[j], es[j + 1]) > 0)
             {
                 exchangeelem(es, j, j + 1);
                 if (inorder)
@@ -132,24 +132,24 @@ void BubbleSort(ElementType es[], int n)
             return;
     }
 }
-int seletpivot(ElementType es[], int n)
+int seletpivot(ElementType es[], int n,int(*cmp)(ElementType,ElementType))
 {
     int m = (n) / 2;
-    int a = CmpElement(es[0], es[m]) > 0 ? 1 : -1;
-    int b = CmpElement(es[m], es[n - 1]) > 0 ? 1 : -1;
+    int a = (*cmp)(es[0], es[m]) > 0 ? 1 : -1;
+    int b = (*cmp)(es[m], es[n - 1]) > 0 ? 1 : -1;
     if (a + b != 0)
         return m;
     else
     {
         if (a == 1)
-            return CmpElement(es[0], es[n - 1]) > 0 ? n - 1 : 0;
+            return (*cmp)(es[0], es[n - 1]) > 0 ? n - 1 : 0;
         else
-            return CmpElement(es[0], es[n - 1]) > 0 ? 0 : n - 1;
+            return (*cmp)(es[0], es[n - 1]) > 0 ? 0 : n - 1;
     }
 }
-void partition_bubble(ElementType es[], int big, int small, bool *inorder, bool *isfirst)
+void partition_bubble(ElementType es[], int big, int small, bool *inorder, bool *isfirst,int(*cmp)(ElementType,ElementType))
 {
-    if (!*isfirst && CmpElement(es[small], es[big]) > 0)
+    if (!*isfirst && (*cmp)(es[small], es[big]) > 0)
     {
         exchangeelem(es, small, big);
         if (*inorder)
@@ -158,7 +158,7 @@ void partition_bubble(ElementType es[], int big, int small, bool *inorder, bool 
     if (*isfirst)
         *isfirst = false;
 }
-int partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder)
+int partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder,int(*cmp)(ElementType,ElementType))
 {
     int p = pivot;
     *linorder = *rinorder = true;
@@ -170,9 +170,9 @@ int partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder
     while (low < high)
     {
         isfirst = true;
-        while (high > p && CmpElement(es[high], e) >= 0)
+        while (high > p && (*cmp)(es[high], e) >= 0)
         {
-            partition_bubble(es, high + 1, high, linorder, &isfirst);
+            partition_bubble(es, high + 1, high, linorder, &isfirst,cmp);
             high--;
         }
         if (high != p)
@@ -181,9 +181,9 @@ int partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder
             p = high;
         }
         isfirst = true;
-        while (low < p && CmpElement(es[low], e) <= 0)
+        while (low < p && (*cmp)(es[low], e) <= 0)
         {
-            partition_bubble(es, low, low - 1, rinorder, &isfirst);
+            partition_bubble(es, low, low - 1, rinorder, &isfirst,cmp);
             low++;
         }
         if (low != p)
@@ -195,33 +195,33 @@ int partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder
     es[p].content = e.content;
     return p;
 }
-void QuickSort(ElementType es[], int n)
+void QuickSort(ElementType es[], int n,int(*cmp)(ElementType,ElementType))
 {
     if (n == 0 || n == 1)
         return;
     else if (n == 2)
     {
-        if (CmpElement(es[0], es[1]) > 0)
+        if ((*cmp)(es[0], es[1]) > 0)
             exchangeelem(es, 0, 1);
         return;
     }
-    int p = seletpivot(es, n);
+    int p = seletpivot(es, n,cmp);
     bool linorder = false, rinorder = false;
-    p = partition(es, n, p, &linorder, &rinorder);
+    p = partition(es, n, p, &linorder, &rinorder,cmp);
     int laster = n - p - 1;
     if (p < laster)
     {
         if (!linorder)
-            QuickSort(es, p);
+            QuickSort(es, p,cmp);
         if (!rinorder)
-            QuickSort(es + p + 1, n - p - 1);
+            QuickSort(es + p + 1, n - p - 1,cmp);
     }
     else
     {
         if (!rinorder)
-            QuickSort(es + p + 1, n - p - 1);
+            QuickSort(es + p + 1, n - p - 1,cmp);
         if (!linorder)
-            QuickSort(es, p);
+            QuickSort(es, p,cmp);
     }
 }
 

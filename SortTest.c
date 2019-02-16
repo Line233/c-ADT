@@ -52,10 +52,10 @@ int main(void)
     ElementType *esc = NULL;
 
     //
-    // testsort(es, n, InsertSort, "insertsort");
-    // testsort(es, n, ShellSort, "shellsort");
-    // testsort(es, n, BubbleSort, "bubblesort");
-    // testsort(es, n, QuickSort, "QuickSort");
+    testsort(es, n, InsertSort, "insertsort");
+    testsort(es, n, ShellSort, "shellsort");
+    testsort(es, n, BubbleSort, "bubblesort");
+    testsort(es, n, QuickSort, "QuickSort");
     testsort(es, n, SelectSort, "SelectSort");
 
     getchar();
