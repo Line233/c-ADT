@@ -107,6 +107,8 @@ void ShellSort(ElementType es[], int n)
 }
 void exchangeelem(ElementType es[], int i, int j)
 {
+    if (i == j)
+        return;
     void *x = es[i].content;
     es[i].content = es[j].content;
     es[j].content = x;
@@ -220,5 +222,24 @@ void QuickSort(ElementType es[], int n)
             QuickSort(es + p + 1, n - p - 1);
         if (!linorder)
             QuickSort(es, p);
+    }
+}
+
+int findmax(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
+{
+    int r = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if ((*cmp)(es[r], es[i]) < 0)
+            r = i;
+    }
+    return r;
+}
+void SelectSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
+{
+    for (int i = n; i > 1; i--)
+    {
+        int r = findmax(es, i, cmp);
+        exchangeelem(es, r, i - 1);
     }
 }

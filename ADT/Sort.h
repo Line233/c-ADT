@@ -9,4 +9,5 @@ void InsertSort(ElementType es[],int n);
 void ShellSort(ElementType es[],int n);
 void BubbleSort(ElementType es[],int n);
 void QuickSort(ElementType es[],int n);
+void SelectSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType));
 #endif

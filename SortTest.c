@@ -22,11 +22,11 @@ ElementType *copyes(ElementType es[], int n)
     }
     return x;
 }
-void testsort(ElementType es[], int n, void (*sort)(ElementType[], int), char *info)
+void testsort(ElementType es[], int n, void (*sort)(ElementType[], int, int (*)(ElementType, ElementType)), char *info)
 {
     TEST(info, 1);
     ElementType *esc = copyes(es, n);
-    sort(esc, n);
+    sort(esc, n, CmpElement);
     printes(esc, n);
     free(esc);
 }
@@ -52,10 +52,11 @@ int main(void)
     ElementType *esc = NULL;
 
     //
-    testsort(es,n,InsertSort,"insertsort");
-    testsort(es,n,ShellSort,"shellsort");
-    testsort(es,n,BubbleSort,"bubblesort");
-    testsort(es,n,QuickSort,"QuickSort");
+    // testsort(es, n, InsertSort, "insertsort");
+    // testsort(es, n, ShellSort, "shellsort");
+    // testsort(es, n, BubbleSort, "bubblesort");
+    // testsort(es, n, QuickSort, "QuickSort");
+    testsort(es, n, SelectSort, "SelectSort");
 
     getchar();
 }
