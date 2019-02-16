@@ -292,3 +292,64 @@ void HeapSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
     }
     _heapadjust(es, i, 0, cmp, true);
 }
+void _fullrest(ElementType es[], ElementType tmp[], int n)
+{
+    for (int i = 0; i < n; i++)
+    {
+        tmp[i].content = es[i].content;
+    }
+}
+void _merge(ElementType es[], ElementType tmp[], int n1, int n2, int (*cmp)(ElementType, ElementType))
+{
+    if (n1 < 0 || n2 < 0)
+        EXIT(ERROR, "error when _merge in sort.c");
+    int n = n1 + n2;
+    int i = 0, j = n1, k = 0;
+    for (i = 0, j = n1; i < n1 && j < n; k++)
+    {
+        if ((*cmp)(es[i], es[j]) > 0)
+        {
+            tmp[k] = es[j];
+            j++;
+        }
+        else
+        {
+            tmp[k] = es[i];
+            i++;
+        }
+    }
+    if (i < n1)
+        _fullrest(es + i, tmp + k, n1 - i);
+    else if (j < n)
+        _fullrest(es + j, tmp + k + n1 - i, n - j);
+}
+void MergeSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
+{
+    ElementType *es2 = (ElementType *)MALLOC(sizeof(ElementType), n, "merge sort no space");
+    for (int i = 0; i < n; i++)
+        es2[i].t = es[0].t;
+    ElementType *data = es, *tmp = es2;
+    for (int d = 1; d < n; d *= 2)
+    {
+        int i = 0;
+        for (i = 0; i < n && i + (2 * d) - 1 < n; i += 2 * d)
+        {
+            _merge(data + i, tmp + i, d, d, cmp);
+        }
+        int r = n % (2 * d);
+        if (r > d)
+        {
+            _merge(data + n - r, tmp + n - r, d, r - d, cmp);
+        }
+        else if(r>0)
+        {
+            _fullrest(data+n-r,tmp+n-r,r);
+        }
+        
+        ElementType *m = tmp;
+        tmp = data;
+        data = m;
+    }
+    if (data != es)
+        _fullrest(data,es,n);
+}

@@ -58,6 +58,7 @@ int main(void)
     testsort(es, n, QuickSort, "QuickSort");
     testsort(es, n, SelectSort, "SelectSort");
     testsort(es, n, HeapSort, "HeapSort");
+    testsort(es, n, MergeSort, "MergeSort");
 
     getchar();
 }
