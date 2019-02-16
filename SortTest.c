@@ -57,6 +57,7 @@ int main(void)
     testsort(es, n, BubbleSort, "bubblesort");
     testsort(es, n, QuickSort, "QuickSort");
     testsort(es, n, SelectSort, "SelectSort");
+    testsort(es, n, HeapSort, "HeapSort");
 
     getchar();
 }

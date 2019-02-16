@@ -2,7 +2,7 @@
 #include <ElementType.h>
 #include <math.h>
 #include <stdbool.h>
-void printes2(ElementType es[], int n)
+void _printes2(ElementType es[], int n)
 {
     for (int i = 0; i < n; i++)
     {
@@ -11,7 +11,7 @@ void printes2(ElementType es[], int n)
         printf("\n");
     }
 }
-int rightposition_straight(ElementType es[], int n, ElementType e, int d,int(*cmp)(ElementType,ElementType))
+int _rightposition_straight(ElementType es[], int n, ElementType e, int d, int (*cmp)(ElementType, ElementType))
 {
     if (n < 1)
         return 0;
@@ -24,7 +24,7 @@ int rightposition_straight(ElementType es[], int n, ElementType e, int d,int(*cm
     return i + d;
 }
 
-int rightposition_binary(ElementType es[], int n, ElementType e,int(*cmp)(ElementType,ElementType))
+int _rightposition_binary(ElementType es[], int n, ElementType e, int (*cmp)(ElementType, ElementType))
 {
     if (n < 1)
         return 0;
@@ -50,10 +50,10 @@ int rightposition_binary(ElementType es[], int n, ElementType e,int(*cmp)(Elemen
         return a;
     }
 }
-void move(ElementType es[], int n, int from, int to, int d)
+void _move(ElementType es[], int n, int from, int to, int d)
 {
     if (n <= from || n <= to || (from - to) % d != 0)
-        EXIT(ERROR, "error whent move");
+        EXIT(ERROR, "error whent _move");
     void *x = es[from].content;
     if (from > to)
     {
@@ -72,40 +72,40 @@ void move(ElementType es[], int n, int from, int to, int d)
         es[to].content = x;
     }
 }
-void InsertSort(ElementType es[], int n,int(*cmp)(ElementType,ElementType))
+void InsertSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
 {
     for (int i = 1; i < n; i++)
     {
         int k;
-        // k = rightposition_straight(es, i, es[i], 1,cmp);
-        k = rightposition_binary(es, i, es[i],cmp);
-        move(es, n, i, k, 1);
+        // k = _rightposition_straight(es, i, es[i], 1,cmp);
+        k = _rightposition_binary(es, i, es[i], cmp);
+        _move(es, n, i, k, 1);
         // printf("\n%d:\n",i);
-        // printes2(es,n);
+        // _printes2(es,n);
     }
 }
 
-void shellsort_helper(ElementType es[], int n, int d,int(*cmp)(ElementType,ElementType))
+void _shellsort_helper(ElementType es[], int n, int d, int (*cmp)(ElementType, ElementType))
 {
     for (int i = d; i < n; i++)
     {
-        // int k = rightposition_straight(es, i, es[i]);
-        int k = rightposition_straight(es, i, es[i], d,cmp);
-        move(es, n, i, k, d);
+        // int k = _rightposition_straight(es, i, es[i]);
+        int k = _rightposition_straight(es, i, es[i], d, cmp);
+        _move(es, n, i, k, d);
         // printf("\n%d:\n",i);
-        // printes2(es,n);
+        // _printes2(es,n);
     }
 }
-void ShellSort(ElementType es[], int n,int(*cmp)(ElementType,ElementType))
+void ShellSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
 {
     int k = (int)log2(n + 1);
     for (int i = 1; i <= k; i++)
     {
         int d = (int)pow(2, k - i);
-        shellsort_helper(es, n, d,cmp);
+        _shellsort_helper(es, n, d, cmp);
     }
 }
-void exchangeelem(ElementType es[], int i, int j)
+void _exchangeelem(ElementType es[], int i, int j)
 {
     if (i == j)
         return;
@@ -113,7 +113,7 @@ void exchangeelem(ElementType es[], int i, int j)
     es[i].content = es[j].content;
     es[j].content = x;
 }
-void BubbleSort(ElementType es[], int n,int(*cmp)(ElementType,ElementType))
+void BubbleSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
 {
     bool inorder;
     for (int i = n - 1; i > 0; i--)
@@ -123,7 +123,7 @@ void BubbleSort(ElementType es[], int n,int(*cmp)(ElementType,ElementType))
         {
             if ((*cmp)(es[j], es[j + 1]) > 0)
             {
-                exchangeelem(es, j, j + 1);
+                _exchangeelem(es, j, j + 1);
                 if (inorder)
                     inorder = false;
             }
@@ -132,7 +132,7 @@ void BubbleSort(ElementType es[], int n,int(*cmp)(ElementType,ElementType))
             return;
     }
 }
-int seletpivot(ElementType es[], int n,int(*cmp)(ElementType,ElementType))
+int _seletpivot(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
 {
     int m = (n) / 2;
     int a = (*cmp)(es[0], es[m]) > 0 ? 1 : -1;
@@ -147,18 +147,18 @@ int seletpivot(ElementType es[], int n,int(*cmp)(ElementType,ElementType))
             return (*cmp)(es[0], es[n - 1]) > 0 ? 0 : n - 1;
     }
 }
-void partition_bubble(ElementType es[], int big, int small, bool *inorder, bool *isfirst,int(*cmp)(ElementType,ElementType))
+void _partition_bubble(ElementType es[], int big, int small, bool *inorder, bool *isfirst, int (*cmp)(ElementType, ElementType))
 {
     if (!*isfirst && (*cmp)(es[small], es[big]) > 0)
     {
-        exchangeelem(es, small, big);
+        _exchangeelem(es, small, big);
         if (*inorder)
             *inorder = false;
     }
     if (*isfirst)
         *isfirst = false;
 }
-int partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder,int(*cmp)(ElementType,ElementType))
+int _partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder, int (*cmp)(ElementType, ElementType))
 {
     int p = pivot;
     *linorder = *rinorder = true;
@@ -172,7 +172,7 @@ int partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder
         isfirst = true;
         while (high > p && (*cmp)(es[high], e) >= 0)
         {
-            partition_bubble(es, high + 1, high, linorder, &isfirst,cmp);
+            _partition_bubble(es, high + 1, high, linorder, &isfirst, cmp);
             high--;
         }
         if (high != p)
@@ -183,7 +183,7 @@ int partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder
         isfirst = true;
         while (low < p && (*cmp)(es[low], e) <= 0)
         {
-            partition_bubble(es, low, low - 1, rinorder, &isfirst,cmp);
+            _partition_bubble(es, low, low - 1, rinorder, &isfirst, cmp);
             low++;
         }
         if (low != p)
@@ -195,37 +195,37 @@ int partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder
     es[p].content = e.content;
     return p;
 }
-void QuickSort(ElementType es[], int n,int(*cmp)(ElementType,ElementType))
+void QuickSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
 {
     if (n == 0 || n == 1)
         return;
     else if (n == 2)
     {
         if ((*cmp)(es[0], es[1]) > 0)
-            exchangeelem(es, 0, 1);
+            _exchangeelem(es, 0, 1);
         return;
     }
-    int p = seletpivot(es, n,cmp);
+    int p = _seletpivot(es, n, cmp);
     bool linorder = false, rinorder = false;
-    p = partition(es, n, p, &linorder, &rinorder,cmp);
+    p = _partition(es, n, p, &linorder, &rinorder, cmp);
     int laster = n - p - 1;
     if (p < laster)
     {
         if (!linorder)
-            QuickSort(es, p,cmp);
+            QuickSort(es, p, cmp);
         if (!rinorder)
-            QuickSort(es + p + 1, n - p - 1,cmp);
+            QuickSort(es + p + 1, n - p - 1, cmp);
     }
     else
     {
         if (!rinorder)
-            QuickSort(es + p + 1, n - p - 1,cmp);
+            QuickSort(es + p + 1, n - p - 1, cmp);
         if (!linorder)
-            QuickSort(es, p,cmp);
+            QuickSort(es, p, cmp);
     }
 }
 
-int findmax(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
+int _findmax(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
 {
     int r = 0;
     for (int i = 0; i < n; i++)
@@ -239,7 +239,56 @@ void SelectSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
 {
     for (int i = n; i > 1; i--)
     {
-        int r = findmax(es, i, cmp);
-        exchangeelem(es, r, i - 1);
+        int r = _findmax(es, i, cmp);
+        _exchangeelem(es, r, i - 1);
     }
+}
+
+int _parent(int k)
+{
+    return (k - 1) / 2;
+}
+int _lchild(int k)
+{
+    return 2 * k + 1;
+}
+int _rchild(int k)
+{
+    return _lchild(k) + 1;
+}
+int _reversecmp(ElementType e1, ElementType e2, int (*cmp)(ElementType, ElementType), bool reverse)
+{
+    return reverse ? -1 * ((*cmp)(e1, e2)) : ((*cmp)(e1, e2));
+}
+void _heapadjust(ElementType es[], int n, int root, int (*cmp)(ElementType, ElementType), bool reverse) //default small to big
+{
+    if (n <= 1)
+        return;
+    ElementType e;
+    e.t = es[0].t;
+    e.content = es[root].content;
+    for (int i = _lchild(root); i < n; root = i, i = _lchild(i))
+    {
+        if (i + 1 < n && _reversecmp(es[i], es[i + 1], cmp, reverse) > 0)
+            i = i + 1;
+        if (_reversecmp(es[i], e, cmp, reverse) < 0)
+            es[root].content = es[i].content;
+        else
+            break;
+    }
+    es[root].content = e.content;
+}
+void HeapSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
+{
+    for (int i = _parent(n - 1); i >= 0; i--)
+    {
+        _heapadjust(es, n, i, cmp, true);
+    }
+    int i;
+    for (i = n - 1; i >= 1; i--)
+    {
+        _exchangeelem(es, 0, i);
+        _heapadjust(es, i, 0, cmp, true);
+    }
+    _heapadjust(es, i, 0, cmp, true);
 }
