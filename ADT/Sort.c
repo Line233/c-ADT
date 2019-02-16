@@ -304,6 +304,18 @@ void _merge(ElementType es[], ElementType tmp[], int n1, int n2, int (*cmp)(Elem
     if (n1 < 0 || n2 < 0)
         EXIT(ERROR, "error when _merge in sort.c");
     int n = n1 + n2;
+    if (n1 == 0 || n2 == 0 || (*cmp)(es[n1 - 1], es[n1]) <= 0)
+    {
+        _fullrest(es, tmp, n);
+        return;
+    }
+    else if ((*cmp)(es[0], es[n - 1]) >= 0)
+    {
+        _fullrest(es + n1, tmp, n2);
+        _fullrest(es, tmp + n2, n1);
+        return;
+    }
+    
     int i = 0, j = n1, k = 0;
     for (i = 0, j = n1; i < n1 && j < n; k++)
     {
@@ -341,15 +353,16 @@ void MergeSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
         {
             _merge(data + n - r, tmp + n - r, d, r - d, cmp);
         }
-        else if(r>0)
+        else if (r > 0)
         {
-            _fullrest(data+n-r,tmp+n-r,r);
+            _merge(data + n - r, tmp + n - r, r, 0, cmp);
         }
-        
+
         ElementType *m = tmp;
         tmp = data;
         data = m;
     }
     if (data != es)
-        _fullrest(data,es,n);
+        _fullrest(data, es, n);
+    _merge(data, tmp, n, 0, cmp);
 }
