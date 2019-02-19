@@ -4,21 +4,37 @@
 #include <time.h>
 #include <stdbool.h>
 
-bool printes(ElementType es[], int n, ElementType correctsort[])
+bool check(ElementType es[], ElementType co[], int n, bool printornot)
+{
+    bool correct = TRUE;
+    for (int i = 0; i < n; i++)
+    {
+        int k=CmpElement(es[i], co[i]);
+        if (co != NULL && CmpElement(es[i], co[i]) != 0)
+        {
+            correct = false;
+            if (printornot)
+            {
+                printf("*%d\t:", i);
+                PrintElement(es[i]);
+                printf("\tshould be  ");
+                PrintElement(co[i]);
+                printf("\n");
+            }
+        }
+    }
+    return correct;
+}
+bool printes(ElementType es[], int n)
 {
     bool correct = TRUE;
     for (int i = 0; i < n; i++)
     {
         printf("%d\t", i);
         PrintElement(es[i]);
-        if (correctsort != NULL && CmpElement(es[i], correctsort[i]) != 0)
-        {
-            correct = false;
-            printf("\tcorrect:");
-            PrintElement(correctsort[i]);
-        }
         printf("\n");
     }
+    printf("\n");
 }
 ElementType *copyes(ElementType es[], int n)
 {
@@ -39,7 +55,9 @@ void testsort(ElementType es[], int n, void (*sort)(ElementType[], int, int (*)(
     clock_t end = clock();
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
     printf("using %lf s\n", time_spent);
-    bool right = printes(esc, n, correct);
+
+    printes(esc, n);
+    bool right = check(esc, correct, n,true);
     printf("%s", right == true ? "pass\n" : "wrong\n");
     free(esc);
     /* here, do your time-consuming job */
@@ -70,11 +88,11 @@ int main(void)
     //     SetValue(es[i], &x);
     // }
     printf("old order:\n");
-    printes(es, n, NULL);
+    printes(es, n);
     ElementType *esc = NULL;
 
     ElementType *co = copyes(es, n);
-    QuickSort(co, n, CmpElement);
+    MergeSort(co, n, CmpElement);
     //
     // testsort(es, n, InsertSort, "insertsort");
     testsort(es, n, ShellSort, "shellsort", co);
