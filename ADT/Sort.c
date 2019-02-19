@@ -2,6 +2,7 @@
 #include <ElementType.h>
 #include <math.h>
 #include <stdbool.h>
+#include <Queue.h>
 void _printes2(ElementType es[], int n)
 {
     for (int i = 0; i < n; i++)
@@ -315,7 +316,7 @@ void _merge(ElementType es[], ElementType tmp[], int n1, int n2, int (*cmp)(Elem
         _fullrest(es, tmp + n2, n1);
         return;
     }
-    
+
     int i = 0, j = n1, k = 0;
     for (i = 0, j = n1; i < n1 && j < n; k++)
     {
@@ -365,4 +366,202 @@ void MergeSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
     if (data != es)
         _fullrest(data, es, n);
     _merge(data, tmp, n, 0, cmp);
+}
+
+typedef enum
+{
+    _decrease = -1,
+    _increase = 1,
+    _balance = 0
+} _trend;
+_trend _gettrend(ElementType e1, ElementType e2, int (*cmp)(ElementType, ElementType))
+{
+    int k = (*cmp)(e1, e2);
+    if (k == 0)
+        return _balance;
+    else if (k < 0)
+        return _increase;
+    else
+        return _decrease;
+}
+void _enqueueint(Queue *queue, int i)
+{
+    ElementType e;
+    InitiateElement(&e, Tint);
+    SetValue(e, &i);
+    EnQueue(queue, e);
+    DestroyElement(&e);
+}
+int _dequeueint(Queue *queue)
+{
+    if (IsEmptyQ(*queue))
+        EXIT(ERROR, "_dequeueint in sort.c");
+    ElementType e;
+    InitiateElement(&e, Tint);
+    DeQueue(queue, &e);
+    int i;
+    GetValue(e, &i);
+    return i;
+}
+
+int _gotokey(ElementType es[], int n, int k, _trend trend, int (*cmp)(ElementType, ElementType))
+{
+    if (trend == _balance)
+        EXIT(ERROR, "_gotokey");
+    if (k + 1 >= n)
+        return -1;
+    for (; k + 1 < n && _gettrend(es[k], es[k + 1], cmp) != -trend; k++)
+        ;
+    if (k == n - 1)
+        return -1;
+    else
+        return k;
+}
+void _reverse(ElementType es[], int n)
+{
+    if (n < 0)
+        EXIT(ERROR, "_reverse error");
+    for (int i = 0; i < n / 2; i++)
+    {
+        _exchangeelem(es, i, n - 1 - i);
+    }
+}
+int _first_trend(ElementType es[], int n, int k, _trend *trend, int (*cmp)(ElementType, ElementType))
+{
+    if (k + 1 > n)
+        return -1;
+    //find first trend
+    int i = k;
+    *trend = _balance;
+    for (i = k; i + 1 < n && *trend == _balance; i++)
+    {
+        *trend = _gettrend(es[i], es[i + 1], cmp);
+    }
+    if (i == n - 1)
+        return -1;
+    else
+        return i - 1;
+}
+int _findkey(ElementType es[], int n, int k, int (*cmp)(ElementType, ElementType))
+{
+    //find first trend
+    _trend t = _balance;
+    int i = _first_trend(es, n, k, &t, cmp);
+    if (i == -1)
+        return -1;
+    //
+    i = _gotokey(es, n, i, t, cmp);
+    if (t == _decrease)
+    {
+        _reverse(es + k, i - k + 1);
+        t = _increase;
+        i = _gotokey(es, n, i, t, cmp);
+    }
+    return i;
+}
+
+// int _findkeytomerge(ElementType es[], int n, int (*cmp)(ElementType, ElementType), Queue *queue)
+// {
+//     if (IsEmptyQ(*queue))
+//         return -1;
+//     int i = _dequeueint(queue);
+//     while (i + 1 < n && (*cmp)(es[i], es[i + 1]) < 0)
+//     {
+//         if (IsEmptyQ(*queue))
+//             return -1;
+//         i = _dequeueint(queue);
+//     }
+//     return i;
+// }
+void _exchange_es(ElementType **es1, ElementType **es2)
+{
+    ElementType *tmp = *es1;
+    *es1 = *es2;
+    *es2 = tmp;
+}
+bool _full_key_queue(ElementType es[], int n, Queue *queue, int (*cmp)(ElementType, ElementType))
+{
+    int i = _findkey(es, n, 0, cmp);
+    if (i == -1)
+        return false;
+    else
+    {
+
+        InitiateQueue(queue, Tint);
+        _enqueueint(queue, i);
+        while (i < n)
+        {
+            i = _findkey(es, n, i + 1, cmp);
+            if (i == -1)
+                break;
+            else
+                _enqueueint(queue, i);
+        }
+        _enqueueint(queue, -1);
+        return true;
+    }
+}
+void KeySort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
+{
+    //find all key node
+    Queue queue;
+    if (!_full_key_queue(es, n, &queue, cmp))
+        return;
+    else
+    {
+        ElementType *es2 = MALLOC(sizeof(ElementType), n, "no space when keysort");
+        for (int j = 0; j < n; j++)
+            InitiateElement(es2 + j, Tint);
+        ElementType *data = es;
+        ElementType *tmpes = es2;
+
+        int start = 0, key = 0, key2 = 0;
+        while (!IsEmptyQ(queue))
+        {
+            //first stage
+            key = _dequeueint(&queue);
+            if (key == -1)
+            {
+                if (start == 0)
+                    break;
+                _merge(data + start, tmpes + start, n - start, 0, cmp);
+                _exchange_es(&data, &tmpes);
+                _enqueueint(&queue, -1);
+                start = 0;
+            }
+            else
+            {
+                key2 = _dequeueint(&queue);
+                if (key2 == -1)
+                {
+                    _merge(data + start, tmpes + start, key + 1 - start, n - key - 1, cmp);
+                    _exchange_es(&data, &tmpes);
+                    _enqueueint(&queue, -1);
+                    start = 0;
+                }
+                else
+                {
+                    _merge(data + start, tmpes + start, key + 1 - start, key2 - key, cmp);
+                    _enqueueint(&queue, key2);
+                    start = key2 + 1;
+                }
+            }
+        }
+        // DestroyQueue(&queue);
+        //correct sorted array in data
+        if (data != es) 
+        {
+            _merge(data, es, n, 0, cmp);
+            free(data);
+        }
+        else
+        {
+            free(tmpes);
+        }
+
+        // else
+        // {
+        //     free(data);
+        // }
+    }
 }

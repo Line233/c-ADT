@@ -55,7 +55,7 @@ Status EnQueue(Queue *queue, ElementType e) //add in tail
 }
 bool IsEmptyQ(Queue queue)
 {
-    return queue.first==NULL;
+    return queue.first == NULL;
 }
 Status DeQueue(Queue *queue, ElementType *e) //out in first
 {
@@ -66,7 +66,7 @@ Status DeQueue(Queue *queue, ElementType *e) //out in first
         PQnode p = queue->first;
         if (queue->first == queue->last) //only one element
         {
-            queue->first=queue->last= NULL;
+            queue->first = queue->last = NULL;
         }
         else
         {
@@ -97,4 +97,12 @@ Status DestroyQueue(Queue *queue)
     queue->last = NULL;
     queue->t = Tnone;
     return OK;
+}
+int QueueLength(Queue queue)
+{
+    PQnode p = queue.first;
+    int i;
+    for ( i = 0; p != NULL; i++, p = p->next)
+        ;
+    return i;
 }

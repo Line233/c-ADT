@@ -28,4 +28,5 @@ Status EnQueue(Queue* queue,ElementType e);
 Status DeQueue(Queue* queue,ElementType* e);
 bool IsEmptyQ(Queue queue);
 Status DestroyQueue(Queue* queue);
+int QueueLength(Queue queue);
 #endif

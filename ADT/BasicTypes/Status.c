@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <time.h>
+#include <stdbool.h>
 
 void EXIT(int x, char s[])
 {
@@ -46,7 +48,17 @@ void IntiateIntArray(int *array, int n, int defaulti)
 //     va_start(args, d);
 //     for (int i = 0; i < d; i++)
 //     {
-        
+
 //     }
 //     va_end(args);
 // }
+int RANDOM(int a, int b)
+{
+    static bool _setrandom = FALSE;
+    if (!_setrandom)
+    {
+        srand(time(NULL));
+        _setrandom = true;
+    }
+    return (rand() % (b - a) + a);
+}

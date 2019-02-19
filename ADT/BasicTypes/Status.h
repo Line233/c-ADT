@@ -14,5 +14,6 @@ void EXIT(int x,char s[]);
 void TEST(char content[],int level);
 void *MALLOC(int size, int num, char *errorinfo);
 void IntiateIntArray(int* array,int n,int defaulti);
+int RANDOM(int a,int b);
 
 #endif
