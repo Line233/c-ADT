@@ -148,32 +148,38 @@ int _seletpivot(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
             return (*cmp)(es[0], es[n - 1]) > 0 ? 0 : n - 1;
     }
 }
-void _partition_bubble(ElementType es[], int big, int small, bool *inorder, bool *isfirst, int (*cmp)(ElementType, ElementType))
+void _partition_bubble(ElementType es[], int n, int big, int small, bool *inorder, int (*cmp)(ElementType, ElementType))
 {
-    if (!*isfirst && (*cmp)(es[small], es[big]) > 0)
+    if (big >= n)
+        EXIT(ERROR, "_partition_bubble");
+    if ((*cmp)(es[small], es[big]) > 0)
     {
         _exchangeelem(es, small, big);
         if (*inorder)
             *inorder = false;
     }
-    if (*isfirst)
-        *isfirst = false;
 }
 int _partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorder, int (*cmp)(ElementType, ElementType))
 {
     int p = pivot;
     *linorder = *rinorder = true;
     ElementType e;
-    InitiateElement(&e, Tint);
+    e.t = Tint;
+    // static bool first = true;
+    // if (first)
+    // {
+    //     InitiateElement(&e, Tint);
+    //     first = false;
+    // }
     e.content = es[p].content;
     int low = 0, high = n - 1;
     bool isfirst;
     while (low < high)
     {
-        isfirst = true;
         while (high > p && (*cmp)(es[high], e) >= 0)
         {
-            _partition_bubble(es, high + 1, high, linorder, &isfirst, cmp);
+            if (high + 1 < n)
+                _partition_bubble(es, n, high + 1, high, rinorder, cmp);
             high--;
         }
         if (high != p)
@@ -184,7 +190,8 @@ int _partition(ElementType es[], int n, int pivot, bool *linorder, bool *rinorde
         isfirst = true;
         while (low < p && (*cmp)(es[low], e) <= 0)
         {
-            _partition_bubble(es, low, low - 1, rinorder, &isfirst, cmp);
+            if (low - 1 >= 0)
+                _partition_bubble(es, n, low, low - 1, linorder, cmp);
             low++;
         }
         if (low != p)
@@ -209,6 +216,8 @@ void QuickSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
     int p = _seletpivot(es, n, cmp);
     bool linorder = false, rinorder = false;
     p = _partition(es, n, p, &linorder, &rinorder, cmp);
+    // printf("a:");
+    // _printes2(es,n);
     int laster = n - p - 1;
     if (p < laster)
     {
@@ -384,20 +393,63 @@ _trend _gettrend(ElementType e1, ElementType e2, int (*cmp)(ElementType, Element
     else
         return _decrease;
 }
+// typedef struct
+// {
+//     ElementType *es;
+//     int n;
+//     int first;
+//     int last;
+//     int used;
+// } myqueue;
+// void _initiatemyqueue(myqueue *queue, int n, type t)
+// {
+//     queue->es = (ElementType *)MALLOC(sizeof(ElementType), n, "_initiatemyqueue");
+//     for (int i = 0; i < n; i++)
+//     {
+//         InitiateElement(queue->es + i, t);
+//     }
+//     queue->last = queue->first = n - 1;
+//     queue->used = 0;
+// }
+// void _enqueueintmy(myqueue *queue, int i)
+// {
+//     if (queue->used == queue->n - 1)
+//         EXIT(ERROR, "_enqueueint");
+//     SetValue(queue->es[queue->last], i);
+//     if (queue->last != 0)
+//         queue->last--;
+//     else
+//     {
+//         queue->last = queue->n - 1;
+//     }
+
+//     // DestroyElement(&e);
+// }
 void _enqueueint(Queue *queue, int i)
 {
-    ElementType e;
-    InitiateElement(&e, Tint);
+    static ElementType e;
+    static bool first = true;
+    if (first)
+    {
+        InitiateElement(&e, Tint);
+        first = false;
+    }
     SetValue(e, &i);
     EnQueue(queue, e);
-    DestroyElement(&e);
+    // DestroyElement(&e);
 }
+
 int _dequeueint(Queue *queue)
 {
     if (IsEmptyQ(*queue))
         EXIT(ERROR, "_dequeueint in sort.c");
-    ElementType e;
-    InitiateElement(&e, Tint);
+    static ElementType e;
+    static bool first = true;
+    if (first)
+    {
+        InitiateElement(&e, Tint);
+        first = false;
+    }
     DeQueue(queue, &e);
     int i;
     GetValue(e, &i);
@@ -451,28 +503,19 @@ int _findkey(ElementType es[], int n, int k, int (*cmp)(ElementType, ElementType
         return -1;
     //
     i = _gotokey(es, n, i, t, cmp);
-    if (t == _decrease)
+    if (i == -1)
+        return -1;
+    else
     {
-        _reverse(es + k, i - k + 1);
-        t = _increase;
-        i = _gotokey(es, n, i, t, cmp);
+        if (t == _decrease)
+        {
+            _reverse(es + k, i - k + 1);
+            t = _increase;
+            i = _gotokey(es, n, i, t, cmp);
+        }
+        return i;
     }
-    return i;
 }
-
-// int _findkeytomerge(ElementType es[], int n, int (*cmp)(ElementType, ElementType), Queue *queue)
-// {
-//     if (IsEmptyQ(*queue))
-//         return -1;
-//     int i = _dequeueint(queue);
-//     while (i + 1 < n && (*cmp)(es[i], es[i + 1]) < 0)
-//     {
-//         if (IsEmptyQ(*queue))
-//             return -1;
-//         i = _dequeueint(queue);
-//     }
-//     return i;
-// }
 void _exchange_es(ElementType **es1, ElementType **es2)
 {
     ElementType *tmp = *es1;
@@ -511,7 +554,7 @@ void KeySort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
     {
         ElementType *es2 = MALLOC(sizeof(ElementType), n, "no space when keysort");
         for (int j = 0; j < n; j++)
-            InitiateElement(es2 + j, Tint);
+            es[2].t = Tint;
         ElementType *data = es;
         ElementType *tmpes = es2;
 
@@ -549,7 +592,7 @@ void KeySort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
         }
         // DestroyQueue(&queue);
         //correct sorted array in data
-        if (data != es) 
+        if (data != es)
         {
             _merge(data, es, n, 0, cmp);
             free(data);
@@ -558,10 +601,5 @@ void KeySort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
         {
             free(tmpes);
         }
-
-        // else
-        // {
-        //     free(data);
-        // }
     }
 }
