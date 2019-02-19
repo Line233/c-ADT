@@ -593,7 +593,6 @@ void KeySort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
         }
         // DestroyQueue(&queue);
         //correct sorted array in data
-        PrintQueue(queue, "");
         if (data != es)
         {
             _merge(data, es, n, 0, cmp);

@@ -3,7 +3,7 @@
 #include <Sort.h>
 #include <time.h>
 #include <stdbool.h>
-#include<limits.h>
+#include <limits.h>
 
 bool check(ElementType es[], ElementType co[], int n, bool printornot)
 {
@@ -118,7 +118,7 @@ int main(void)
 {
     while (true)
     {
-        int n = 1000000;
+        int n = 100000;
         ElementType *es = _getes(n);
         ElementType *esc = NULL;
 
