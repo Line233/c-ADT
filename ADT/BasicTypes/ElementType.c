@@ -83,6 +83,14 @@ void SetContentPointer(ElementType *e, void *p)
         EXIT(ERROR, "null cant be set when SetContentPointer");
     e->content = p;
 }
+
+void DestroyElementArray(ElementType es[],int n)
+{
+    for(int i=0;i<n;i++)
+    {
+        DestroyElement(es+i);
+    }
+}
 //for each type
 //for int
 

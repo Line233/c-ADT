@@ -29,6 +29,7 @@ void GetValue(ElementType e, void *value);
 void CopyElementReferrence(ElementType *copy, ElementType a);
 void GetContentPointer(ElementType e, void **p);
 void SetContentPointer(ElementType* e, void *p);
+void DestroyElementArray(ElementType es[],int n);
 //for eachtype
 
 #include "Triple.h"

@@ -154,7 +154,7 @@ void _partition_bubble(ElementType es[], int n, int big, int small, bool *inorde
         EXIT(ERROR, "_partition_bubble");
     if ((*cmp)(es[small], es[big]) > 0)
     {
-        _exchangeelem(es, small, big);
+        // _exchangeelem(es, small, big);
         if (*inorder)
             *inorder = false;
     }
@@ -309,6 +309,12 @@ void _fullrest(ElementType es[], ElementType tmp[], int n)
         tmp[i].content = es[i].content;
     }
 }
+void _exchange_es(ElementType **es1, ElementType **es2)
+{
+    ElementType *tmp = *es1;
+    *es1 = *es2;
+    *es2 = tmp;
+}
 void _merge(ElementType es[], ElementType tmp[], int n1, int n2, int (*cmp)(ElementType, ElementType))
 {
     if (n1 < 0 || n2 < 0)
@@ -368,13 +374,14 @@ void MergeSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
             _merge(data + n - r, tmp + n - r, r, 0, cmp);
         }
 
-        ElementType *m = tmp;
-        tmp = data;
-        data = m;
+        _exchange_es(&data, &tmp);
     }
+    //completely sorted array is data;
     if (data != es)
+    {
         _fullrest(data, es, n);
-    _merge(data, tmp, n, 0, cmp);
+    }
+    free(es2);
 }
 
 typedef enum
@@ -515,12 +522,7 @@ int _findkey(ElementType es[], int n, int k, int (*cmp)(ElementType, ElementType
 
     //
 }
-void _exchange_es(ElementType **es1, ElementType **es2)
-{
-    ElementType *tmp = *es1;
-    *es1 = *es2;
-    *es2 = tmp;
-}
+
 bool _full_key_queue(ElementType es[], int n, Queue *queue, int (*cmp)(ElementType, ElementType))
 {
     int i = _findkey(es, n, 0, cmp);
@@ -595,11 +597,7 @@ void KeySort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
         if (data != es)
         {
             _merge(data, es, n, 0, cmp);
-            free(data);
         }
-        else
-        {
-            free(tmpes);
-        }
+        free(es2);
     }
 }

@@ -3,6 +3,7 @@
 #include <Sort.h>
 #include <time.h>
 #include <stdbool.h>
+#include<limits.h>
 
 bool check(ElementType es[], ElementType co[], int n, bool printornot)
 {
@@ -55,74 +56,89 @@ bool testsort(ElementType es[], int n, void (*sort)(ElementType[], int, int (*)(
     clock_t end = clock();
     double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
     printf("using %lf s\n", time_spent);
-
     // printes(esc, n);
+    //deal with wrong result
     bool right = check(esc, correct, n, false);
     printf("%s", right == true ? "pass\n" : "wrong\n");
-    // getchar();
-    free(esc);
-    /* here, do your time-consuming job */
     if (right == false)
     {
         printf("origin data and sorted");
+        getchar();
         for (int i = 0; i < n; i += 1000)
         {
             PrintElement(es[i]);
             printf("\t");
-            // PrintElement(esc[i]);
+            PrintElement(esc[i]);
             printf("\n");
         }
     }
+    DestroyElementArray(esc, n);
+    free(esc);
 }
-int main(void)
+ElementType *_getes(int n)
 {
-    FILE *f = fopen("./TestData/SortData.txt", "r");
-    if (!f)
-        EXIT(ERROR, "open file failed");
+    //public
     ElementType e;
     InitiateElement(&e, Tint);
-    int n, x;
-// GET DATA
-// fscanf(f, "%d", &n);
-// ElementType *es = MALLOC(sizeof(ElementType), n, "space error in sorttest");
-// for (int i = 0; i < n; i++)
-// {
-//     fscanf(f, "%d", &x);
-//     InitiateElement(es + i, Tint);
-//     SetValue(es[i], &x);
-// }
-a:
+    int x;
+
+    //file access
+    // FILE *f = fopen("./TestData/SortData.txt", "r");
+    // if (!f)
+    //     EXIT(ERROR, "open file failed");
+    // fscanf(f, "%d", &n);
+    // ElementType *es = MALLOC(sizeof(ElementType), n, "space error in sorttest");
+    // for (int i = 0; i < n; i++)
+    // {
+    //     fscanf(f, "%d", &x);
+    //     InitiateElement(es + i, Tint);
+    //     SetValue(es[i], &x);
+    // }
+
+    //random access
     printf("how many randoms do you need?\n");
     // scanf("%d", &n);
-    n=1000000;
     fflush(stdin);
     ElementType *es = MALLOC(sizeof(ElementType), n, "space error in sorttest");
     int i;
-    for (i = 0; i < n; i += 1000)
+    for (i = 0; i < n; i += 1)
     {
-        x = RANDOM(0, 100000);
+        x = RANDOM(0, INT_MAX);
         // fscanf(f, "%d", &x);
         // x=1;
-        for (int j = i; j < i + 1000; j++)
+        for (int j = i; j < i + 1; j++)
         {
             InitiateElement(es + j, Tint);
             SetValue(es[j], &x);
         }
     }
-    ElementType *esc = NULL;
+    return es;
+}
+int main(void)
+{
+    while (true)
+    {
+        int n = 1000000;
+        ElementType *es = _getes(n);
+        ElementType *esc = NULL;
 
-    ElementType *co = copyes(es, n);
-    MergeSort(co, n, CmpElement);
-    //
-    // testsort(es, n, InsertSort, "insertsort",co);
-    // testsort(es, n, ShellSort, "shellsort", co);
-    // testsort(es, n, BubbleSort, "bubblesort");
-    // testsort(es, n, QuickSort, "QuickSort", co);
-    // testsort(es, n, SelectSort, "SelectSort");
-    // testsort(es, n, HeapSort, "HeapSort", co);
-    testsort(es, n, KeySort, "KeySort", co);
-    testsort(es, n, MergeSort, "MergeSort", co);
-    goto a;
+        ElementType *co = copyes(es, n);
+        MergeSort(co, n, CmpElement);
+        //
+        // testsort(es, n, InsertSort, "insertsort", co);
+        // testsort(es, n, ShellSort, "shellsort", co);
+        // testsort(es, n, BubbleSort, "bubblesort",co);
+        testsort(es, n, QuickSort, "QuickSort", co);
+        // testsort(es, n, SelectSort, "SelectSort", co);
+        testsort(es, n, HeapSort, "HeapSort", co);
+        testsort(es, n, KeySort, "KeySort", co);
+        testsort(es, n, MergeSort, "MergeSort", co);
+        DestroyElementArray(es, n);
+        free(es);
+        DestroyElementArray(co, n);
+        free(co);
+        printf("disposed es\n");
+    }
     printf("\ntest over\n");
     getchar();
 }
