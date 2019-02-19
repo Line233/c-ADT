@@ -499,22 +499,21 @@ int _findkey(ElementType es[], int n, int k, int (*cmp)(ElementType, ElementType
     //find first trend
     _trend t = _balance;
     int i = _first_trend(es, n, k, &t, cmp);
-    if (i == -1)
-        return -1;
-    //
-    i = _gotokey(es, n, i, t, cmp);
-    if (i == -1)
-        return -1;
-    else
+    if (i != -1)
     {
-        if (t == _decrease)
-        {
-            _reverse(es + k, i - k + 1);
-            t = _increase;
-            i = _gotokey(es, n, i, t, cmp);
-        }
-        return i;
+        i = _gotokey(es, n, i, t, cmp);
     }
+    //-1 or another
+    if (t == _decrease)
+    {
+        _reverse(es + k, (i == -1 ? n - 1 : i) - k + 1);
+        t = _increase;
+        if (i != -1)
+            i = _gotokey(es, n, i, t, cmp);
+    }
+    return i;
+
+    //
 }
 void _exchange_es(ElementType **es1, ElementType **es2)
 {
@@ -554,7 +553,7 @@ void KeySort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
     {
         ElementType *es2 = MALLOC(sizeof(ElementType), n, "no space when keysort");
         for (int j = 0; j < n; j++)
-            es[2].t = Tint;
+            es2[j].t = Tint;
         ElementType *data = es;
         ElementType *tmpes = es2;
 
@@ -592,6 +591,7 @@ void KeySort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
         }
         // DestroyQueue(&queue);
         //correct sorted array in data
+        PrintQueue(queue, "");
         if (data != es)
         {
             _merge(data, es, n, 0, cmp);
