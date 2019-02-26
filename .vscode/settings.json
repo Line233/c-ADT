@@ -3,6 +3,8 @@
         "elementtype.h": "c",
         "malloc.h": "c",
         "stdarg.h": "c",
-        "ci.h": "c"
+        "ci.h": "c",
+        "sort.h": "c",
+        "stdio.h": "c"
     }
 }
