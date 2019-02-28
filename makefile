@@ -15,9 +15,11 @@ EXE_OBJ=${wildcard ./obj/*.o}
 
 all: SortTest.exe
 
-alls:BinaryTreeTest.exe ElementTypeTest.exe StackSTest.exe GraphTest.exe Addline.exe SortTest.exe
+alls:BinaryTreeTest.exe ElementTypeTest.exe StackSTest.exe GraphTest.exe Addline.exe SortTest.exe QueueTest.exe
 
 
+QueueTest.exe: $(ADT_OBJ) $(BASICTYPE_OBJ)  obj/QueueTest.o
+	$(CC) $(Iarg)  -o $@ $^
 BinaryTreeTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ)  obj/BinaryTreeTest.o
 	$(CC) $(Iarg)  -o $@ $^
 Addline.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ)  obj/Addline.o

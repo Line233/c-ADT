@@ -102,7 +102,86 @@ int QueueLength(Queue queue)
 {
     PQnode p = queue.first;
     int i;
-    for ( i = 0; p != NULL; i++, p = p->next)
+    for (i = 0; p != NULL; i++, p = p->next)
         ;
     return i;
+}
+
+Status InitiateStaticQueue(StaticQueue *queue, type t, int n)
+{
+    queue->e = MALLOC(sizeof(ElementType), n, "no space when InitiateStaticQueue");
+    for (int i = 0; i < n; i++)
+        InitiateElement(queue->e + i, t);
+    queue->front = 0;
+    queue->rear = 0;
+    queue->size = n;
+    queue->used = 0;
+}
+
+Status PrintStaticQueue(StaticQueue queue, char info[])
+{
+    printf("%s:\n", info);
+    int p = queue.front;
+    for (int p = queue.front; p != queue.rear;)
+    {
+        printf("\t");
+        PrintElement(queue.e[p]);
+        printf("\n");
+        if (p + 1 < queue.size)
+            p++;
+        else
+            p = 0;
+    }
+    printf("\n");
+    return OK;
+}
+Status EnStaticQueue(StaticQueue *queue, ElementType e)
+{
+    if (!IsFullStaticQueue(*queue))
+    {
+        CopyElement(queue->e[queue->rear], e);
+        if (queue->rear + 1 < queue->size)
+            queue->rear++;
+        else
+            queue->rear = 0;
+        queue->used++;
+    }
+    else
+    {
+        EXIT(ERROR, "staticqueue is full when EnStaticQueue");
+    }
+}
+Status DeStaticQueue(StaticQueue *queue, ElementType *e)
+{
+    if (!IsEmptyStaticQueue(*queue))
+    {
+        CopyElement(*e, queue->e[queue->front]);
+        if (queue->front + 1 < queue->size)
+            queue->front++;
+        else
+            queue->front = 0;
+        queue->used++;
+    }
+    else
+        EXIT(ERROR, "staticqueue is empty when DeStaticQueue");
+}
+bool IsEmptyStaticQueue(StaticQueue queue)
+{
+    return queue.used == 0;
+}
+Status DestroyStaticQueue(StaticQueue *queue)
+{
+    for (int i = 0; i < queue->size; i++)
+        DestroyElement(queue->e + i);
+    free(queue->e);
+    queue->e = NULL;
+    queue->front = queue->rear = queue->size = queue->used = 0;
+}
+int StaticQueueLength(StaticQueue queue)
+{
+    return queue.used;
+}
+bool IsFullStaticQueue(StaticQueue queue)
+{
+    return queue.used == queue.size;
 }

@@ -52,7 +52,8 @@ void IntiateIntArray(int *array, int n, int defaulti)
 //     }
 //     va_end(args);
 // }
-int RANDOM(int a, int b)
+
+int RANDOM(int min, int max)
 {
     static bool _setrandom = FALSE;
     if (!_setrandom)
@@ -60,5 +61,15 @@ int RANDOM(int a, int b)
         srand(time(NULL));
         _setrandom = true;
     }
-    return (rand() % (b - a) + a);
+    return (rand() % (max - min) + min);
+}
+
+int *GetIntArray(int n, int min, int max)
+{
+    int *xs = MALLOC(sizeof(int), n, "no space when GetIntArray");
+    for (int i = 0; i < n; i++)
+    {
+        xs[i] = RANDOM(min, max);
+    }
+    return xs;
 }

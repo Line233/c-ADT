@@ -371,46 +371,46 @@ bool testsortx(int es[], int n, void (*sort)(int[], int, int (*)(int, int)), cha
 
 int main(void)
 {
-    // while (true)
-    // {
-    //     int n = 100000;
-    //     ElementType *es = _getes(n);
-    //     ElementType *esc = NULL;
-
-    //     ElementType *co = copyes(es, n);
-    //     MergeSort(co, n, CmpElement);
-    //     //
-    //     // testsort(es, n, InsertSort, "insertsort", co);
-    //     // testsort(es, n, ShellSort, "shellsort", co);
-    //     // testsort(es, n, BubbleSort, "bubblesort",co);
-    //     testsort(es, n, QuickSort, "quicksort_x", co);
-    //     // testsort(es, n, SelectSort, "SelectSort", co);
-    //     testsort(es, n, HeapSort, "HeapSort", co);
-    //     testsort(es, n, KeySort, "KeySort", co);
-    //     testsort(es, n, MergeSort, "MergeSort", co);
-    //     DestroyElementArray(es, n);
-    //     free(es);
-    //     DestroyElementArray(co, n);
-    //     free(co);
-    //     printf("disposed es\n");
-    // }
-    // printf("\ntest over\n");
-    // getchar();
     while (true)
     {
-        int n = 1000000;
-        int *es = getints(n);
-        int *esc = NULL;
+        int n = 100000;
+        ElementType *es = _getes(n);
+        ElementType *esc = NULL;
 
-        int *co = copyints(es, n);
-        quicksort_x(co, n, cmpint);
+        ElementType *co = copyes(es, n);
+        MergeSort(co, n, CmpElement);
         //
-        testsortx(es, n, mergesort, "mergesort", co);
-        testsortx(es, n, quicksort_x, "quicksort_x", co);
+        // testsort(es, n, InsertSort, "insertsort", co);
+        // testsort(es, n, ShellSort, "shellsort", co);
+        // testsort(es, n, BubbleSort, "bubblesort",co);
+        testsort(es, n, QuickSort, "quicksort_x", co);
+        // testsort(es, n, SelectSort, "SelectSort", co);
+        // testsort(es, n, HeapSort, "HeapSort", co);
+        // testsort(es, n, KeySort, "KeySort", co);
+        testsort(es, n, MergeSort, "MergeSort", co);
+        DestroyElementArray(es, n);
         free(es);
+        DestroyElementArray(co, n);
         free(co);
         printf("disposed es\n");
     }
     printf("\ntest over\n");
     getchar();
+    // while (true)
+    // {
+    //     int n = 1000000;
+    //     int *es = getints(n);
+    //     int *esc = NULL;
+
+    //     int *co = copyints(es, n);
+    //     quicksort_x(co, n, cmpint);
+    //     //
+    //     testsortx(es, n, mergesort, "mergesort", co);
+    //     testsortx(es, n, quicksort_x, "quicksort_x", co);
+    //     free(es);
+    //     free(co);
+    //     printf("disposed es\n");
+    // }
+    // printf("\ntest over\n");
+    // getchar();
 }
