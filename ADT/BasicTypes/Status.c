@@ -33,7 +33,7 @@ void *MALLOC(int size, int num, char *errorinfo)
 {
     void *p = malloc(size * num);
     if (!p)
-        EXIT(ERROR, strcat("no space", errorinfo));
+        EXIT(ERROR, strcat("no space when", errorinfo));
     else
         return p;
 }
@@ -72,4 +72,14 @@ int *GetIntArray(int n, int min, int max)
         xs[i] = RANDOM(min, max);
     }
     return xs;
+}
+
+void PrintIntArray_Tool(int ints[],int n,char* s)
+{
+    printf("%s\n",s);
+    for(int i=0;i<n;i++)
+    {
+        printf("\t%d\n",ints[i]);
+    }
+    printf("\n");
 }

@@ -499,7 +499,7 @@ bool _full_key_queue(ElementType es[], int n, StaticQueue *queue, int (*cmp)(Ele
     else
     {
 
-        InitiateStaticQueue(queue, Tint,n*2);
+        InitiateStaticQueue(queue, Tint, n * 2);
         _enqueueint(queue, i);
         while (i < n)
         {
@@ -567,4 +567,83 @@ void KeySort(ElementType es[], int n, int (*cmp)(ElementType, ElementType))
         }
         free(es2);
     }
+}
+void _destribute(ElementType es[], int n, int radix, int k, int min, int *next, int *front, int *end, int (*index)(ElementType, int))
+{
+    for (int i = 0; i < radix; i++)
+    {
+        front[i] = end[i] = -1;
+    }
+    for (int i = min; i != -1; i = next[i])
+    {
+        int x = index(es[i], k); // ith elem should insert to xth link
+        if (front[x] != -1)
+            next[end[x]] = i;
+        else
+            front[x] = i;
+        end[x] = i;
+    }
+}
+int _collect(int radix, int *next, int *front, int *end)
+{
+    int last = -1;
+    int min = -1;
+    for (int i = 0; i < radix; i++)
+    {
+        if (front[i] != -1)
+        {
+            if (last != -1)
+                next[last] = front[i];
+            else
+                min = front[i];
+            last = end[i];
+        }
+    }
+    next[last] = -1;
+    return min;
+}
+void _to_correct_order(ElementType es[], int *next, int n, int min)
+{
+    int ali = min; //actual elem in order
+    for (int i = 0; i < n; i++)
+    {
+        if (i != ali)
+        {
+            _exchangeelem(es, i, ali);
+            int tmp = next[ali];
+            next[ali] = next[i];
+            next[i] = ali;
+            ali = tmp;
+        }
+        while (ali <= i)
+        {
+            ali = next[ali];
+        }
+    }
+}
+void RadixSort(ElementType es[], int n, int radix, int keynum, int (*index)(ElementType, int))
+{
+    if (n < 0 || radix <= 0)
+        EXIT(ERROR, "n or radix is overrange when RadixSort");
+    if (n == 0)
+        return;
+    int *next = MALLOC(sizeof(int), n, "RadixSort");
+    for (int i = 0; i < n; i++)
+        next[i] = i + 1;
+    next[n - 1] = -1;
+    int *front = MALLOC(sizeof(int), radix, "RadixSort");
+    int *end = MALLOC(sizeof(int), radix, "RadixSort");
+
+    int min = 0;
+    for (int i = 0; i < keynum; i++)
+    {
+        _destribute(es, n, radix, i, min, next, front, end, index);
+        min = _collect(radix, next, front, end);
+    }
+
+    _to_correct_order(es, next, n, min);
+
+    free(next);
+    free(front);
+    free(end);
 }

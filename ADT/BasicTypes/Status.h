@@ -16,5 +16,6 @@ void *MALLOC(int size, int num, char *errorinfo);
 void IntiateIntArray(int* array,int n,int defaulti);
 int RANDOM(int a,int b);
 int *GetIntArray(int n, int max, int min);
+void PrintIntArray_Tool(int ints[],int n,char* s);
 
 #endif

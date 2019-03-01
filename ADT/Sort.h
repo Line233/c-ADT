@@ -13,5 +13,5 @@ void SelectSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType));
 void HeapSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType));
 void MergeSort(ElementType es[], int n, int (*cmp)(ElementType, ElementType));
 void KeySort(ElementType es[], int n, int (*cmp)(ElementType, ElementType));
-
+void RadixSort(ElementType es[], int n, int radix,int keynum, int (*index)(ElementType, int));
 #endif
