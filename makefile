@@ -13,49 +13,53 @@ BASICTYPE_OBJ=${patsubst $(BASICTYPE_PATH)/%.c,$(BASICTYPE_PATH)/obj/%.o,$(BASIC
 
 EXE_OBJ=${wildcard ./obj/*.o}
 
-all: SortTest.exe
+all: SortTest.exe OBJ_PATH
 
-alls:BinaryTreeTest.exe ElementTypeTest.exe StackSTest.exe GraphTest.exe Addline.exe SortTest.exe QueueTest.exe
+alls:BinaryTreeTest.exe ElementTypeTest.exe StackSTest.exe GraphTest.exe Addline.exe SortTest.exe QueueTest.exe 
 
 
-QueueTest.exe: $(ADT_OBJ) $(BASICTYPE_OBJ)  obj/QueueTest.o
+QueueTest.exe: $(ADT_OBJ) $(BASICTYPE_OBJ)  obj/QueueTest.o 
 	$(CC) $(Iarg)  -o $@ $^
-BinaryTreeTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ)  obj/BinaryTreeTest.o
+BinaryTreeTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ)  obj/BinaryTreeTest.o 
 	$(CC) $(Iarg)  -o $@ $^
-Addline.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ)  obj/Addline.o
+Addline.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ)  obj/Addline.o 
 	$(CC) $(Iarg)  -o $@ $^
-StackSTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ) obj/StackSTest.o
+StackSTest.exe:  $(ADT_OBJ) $(BASICTYPE_OBJ) obj/StackSTest.o 
 	$(CC) $(Iarg) -o $@ $^
 
-ElementTypeTest.exe: $(ADT_OBJ) $(BASICTYPE_OBJ) obj/ElementTypeTest.o
+ElementTypeTest.exe: $(ADT_OBJ) $(BASICTYPE_OBJ) obj/ElementTypeTest.o 
 	$(CC) $(Iarg) -o $@ $^ 
 
-GraphTest.exe:$(ADT_OBJ) $(BASICTYPE_OBJ) obj/GraphTest.o
-	$(CC) $(Iarg) -o $@ $^ 
-
-
-SortTest.exe:$(ADT_OBJ) $(BASICTYPE_OBJ) obj/SortTest.o
+GraphTest.exe:$(ADT_OBJ) $(BASICTYPE_OBJ) obj/GraphTest.o 
 	$(CC) $(Iarg) -o $@ $^ 
 
 
+SortTest.exe:$(ADT_OBJ) $(BASICTYPE_OBJ) obj/SortTest.o 
+	$(CC) $(Iarg) -o $@ $^ 
 
-$(ADT_OBJ):$(ADT_PATH)/obj/%.o:$(ADT_PATH)/%.c $(ADT_PATH)/%.h $(BASICTYPE_OBJ)
+
+
+$(ADT_OBJ):$(ADT_PATH)/obj/%.o:$(ADT_PATH)/%.c $(ADT_PATH)/%.h $(BASICTYPE_OBJ) ADT_OBJ_PATH
 	$(CC) $(Iarg) -c ${patsubst $(ADT_PATH)/obj/%.o,$(ADT_PATH)/%.c,$@} -o $@
 	
-$(BASICTYPE_OBJ): $(BASICTYPE_PATH)/obj/%.o:$(BASICTYPE_PATH)/%.c $(BASICTYPE_PATH)/%.h 
+$(BASICTYPE_OBJ): $(BASICTYPE_PATH)/obj/%.o:$(BASICTYPE_PATH)/%.c $(BASICTYPE_PATH)/%.h  BASICTYPE_OBJ_PATH
 	$(CC) $(Iarg) -c $< -o $@
+
+
+obj/%.o:%.c 
+	$(CC) $(Iarg) -c $< -o $@ 
 
 ADT_OBJ_PATH:
 	mkdir -p  $(ADT_PATH)/obj
 
 BASICTYPE_OBJ_PATH:
 	mkdir -p  $(BASICTYPE_PATH)/obj
+OBJ_PATH:
+	mkdir -p ./obj
 
-obj/%.o:%.c
-	$(CC) $(Iarg) -c $< -o $@
 
 clean:
-	rm $(ADT_OBJ) $(BASICTYPE_OBJ) $(EXE_OBJ)
+	rm -r $(ADT_PATH)/obj $(BASICTYPE_PATH)/obj ./obj
 
 
 # $@: the target filename.
