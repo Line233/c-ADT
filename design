@@ -1,0 +1,18 @@
+adt
+    binarytree
+    stack
+    basictypes
+        elementtype
+        int
+        triple
+        status
+
+void InitiateElement(ElementType *e, type t);
+    initiate e->e
+void DestroyElement(ElementType *e);
+    Destroy e->e
+void PrintElement(ElementType t);
+int CmpElement(ElementType a, ElementType b);
+void CopyElement(ElementType *copy, ElementType a);
+void SetValue(ElementType t, void *value);
+
